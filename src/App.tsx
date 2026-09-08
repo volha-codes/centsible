@@ -1,5 +1,7 @@
+import Accounts from "./features/accounts/Accounts";
+
 function App() {
-  return <div className="p-8">Centsible</div>;
+  return <Accounts />;
 }
 
 export default App;
