@@ -1,5 +1,5 @@
 function App() {
-  return <div className="p-8">Centsible</div>
+  return <div className="p-8">Centsible</div>;
 }
 
-export default App
+export default App;
