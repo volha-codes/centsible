@@ -1,4 +1,4 @@
-import { createSlice, createEntityAdapter } from "@reduxjs/toolkit";
+import { createSlice, createEntityAdapter, nanoid } from "@reduxjs/toolkit";
 
 import type { Account } from "../../types";
 import type { RootState } from "../../app/store";
@@ -11,7 +11,12 @@ const accountsSlice = createSlice({
   name: "accounts",
   initialState,
   reducers: {
-    accountAdded: accountsAdapter.addOne,
+    accountAdded: {
+      prepare: (account: Omit<Account, "id">) => ({
+        payload: { ...account, id: nanoid() },
+      }),
+      reducer: accountsAdapter.addOne,
+    },
     accountUpdated: accountsAdapter.updateOne,
     accountRemoved: accountsAdapter.removeOne,
   },
