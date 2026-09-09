@@ -24,7 +24,7 @@ const Accounts = () => {
   };
 
   return (
-    <>
+    <div>
       <form onSubmit={handleSubmit}>
         <input
           required
@@ -58,7 +58,7 @@ const Accounts = () => {
           ))}
         </ul>
       </div>
-    </>
+    </div>
   );
 };
 
