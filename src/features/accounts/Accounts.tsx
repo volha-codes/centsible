@@ -2,10 +2,12 @@ import { useState, type FormEvent } from "react";
 
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { accountAdded, selectAllAccounts } from "./accountsSlice";
+import { Plus } from "lucide-react";
 import Card from "../../components/ui/Card";
 import Input from "../../components/ui/Input";
 import Select from "../../components/ui/Select";
 import Field from "../../components/ui/Field";
+import Button from "../../components/ui/Button";
 
 const Accounts = () => {
   const dispatch = useAppDispatch();
@@ -63,7 +65,13 @@ const Accounts = () => {
               }}
             />
           </Field>
-          <button type="submit">Add Account</button>
+          <Button
+            type="submit"
+            className="flex w-auto items-center gap-1.5 self-start"
+          >
+            <Plus size={16} />
+            Add Account
+          </Button>
         </form>
       </Card>
 
