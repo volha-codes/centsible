@@ -12,6 +12,7 @@
   --color-income: #c4f542;
   --color-expense: #fb7185;
   --color-warning: #fbbf24;
+  --color-placeholder: #5c5c60;
 }
 
 @layer base {

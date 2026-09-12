@@ -3,6 +3,7 @@ import { useState, type FormEvent } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { accountAdded, selectAllAccounts } from "./accountsSlice";
 import Card from "../../components/ui/Card";
+import Input from "../../components/ui/Input";
 
 const Accounts = () => {
   const dispatch = useAppDispatch();
@@ -29,7 +30,7 @@ const Accounts = () => {
     <div className="flex items-start gap-5">
       <Card header="Add Account" className="min-w-95">
         <form onSubmit={handleSubmit} className="flex flex-col gap-3.5">
-          <input
+          <Input
             required
             type="text"
             placeholder="Account Name"
@@ -42,11 +43,15 @@ const Accounts = () => {
             value={currency}
             onChange={(e) => setCurrency(e.target.value)}
           />
-          <input
+          <Input
+            required
             type="number"
             placeholder="Starting Balance"
             value={startingBalance}
             onChange={(e) => setStartingBalance(e.target.value)}
+            onKeyDown={(e) => {
+              if (["e", "E", "+"].includes(e.key)) e.preventDefault();
+            }}
           />
           <button type="submit">Add Account</button>
         </form>
