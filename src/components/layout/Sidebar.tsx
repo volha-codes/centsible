@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 
 import Logo from "../Logo";
+import { cn } from "../../lib/cn";
 
 const NAV = [
   {
@@ -36,7 +37,13 @@ const NAV = [
   },
 ];
 
-const Sidebar = () => {
+const Sidebar = ({
+  activeLabel,
+  onNavigate,
+}: {
+  activeLabel: string;
+  onNavigate: (label: string) => void;
+}) => {
   return (
     <aside className="flex w-56 shrink-0 flex-col gap-8 border-r border-border px-5 py-8">
       <div className="flex items-center gap-2.5">
@@ -51,7 +58,13 @@ const Sidebar = () => {
           return (
             <button
               key={item.label}
-              className="flex h-10 cursor-pointer items-center gap-2 rounded-xl px-3 text-muted transition-colors duration-200 hover:bg-surface hover:text-primary"
+              className={cn(
+                "flex h-10 cursor-pointer items-center gap-2 rounded-xl px-3 transition-colors duration-200",
+                activeLabel === item.label
+                  ? "bg-surface text-primary"
+                  : "text-muted hover:bg-surface hover:text-primary",
+              )}
+              onClick={() => onNavigate(item.label)}
             >
               <Icon className="h-4 w-4" />
               <span>{item.label}</span>
