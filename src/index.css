@@ -1,6 +1,9 @@
 @import "tailwindcss";
+@import "@fontsource-variable/inter";
 
 @theme {
+  --font-sans: "Inter Variable", system-ui, sans-serif;
+
   --color-background: #0a0a0b;
   --color-surface: #17171a;
   --color-surface-elevated: #202024;
@@ -23,5 +26,6 @@
   body {
     background-color: var(--color-background);
     color: var(--color-content);
+    font-family: var(--font-sans);
   }
 }
