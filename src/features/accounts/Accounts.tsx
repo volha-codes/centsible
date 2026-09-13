@@ -1,14 +1,20 @@
+import { Plus, Trash2 } from "lucide-react";
 import { useRef, useState, type FormEvent } from "react";
-import { Plus } from "lucide-react";
 
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { accountAdded, selectAllAccounts } from "./accountsSlice";
+import Button from "../../components/ui/Button";
 import Card from "../../components/ui/Card";
+import ConfirmDialog from "../../components/ui/ConfirmDialog";
+import Field from "../../components/ui/Field";
 import Input from "../../components/ui/Input";
 import Select from "../../components/ui/Select";
-import Field from "../../components/ui/Field";
-import Button from "../../components/ui/Button";
 import { formatCurrency } from "../../lib/formatCurrency";
+import type { Account } from "../../types";
+import {
+  accountAdded,
+  accountRemoved,
+  selectAllAccounts,
+} from "./accountsSlice";
 
 const Accounts = () => {
   const dispatch = useAppDispatch();
@@ -19,6 +25,7 @@ const Accounts = () => {
   const [name, setName] = useState("");
   const [currency, setCurrency] = useState("PLN");
   const [startingBalance, setStartingBalance] = useState("");
+  const [accountToDelete, setAccountToDelete] = useState<Account | null>(null);
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -100,7 +107,7 @@ const Accounts = () => {
               <li key={account.id} className="flex flex-col gap-3.5">
                 <hr className="border-border" />
 
-                <div className="flex items-center gap-2.5">
+                <div className="flex items-center gap-2.5 py-1.5">
                   <div className="font-medium">{account.name}</div>
                   <div className="rounded-md bg-surface-elevated px-2 py-1 text-sm font-medium text-muted">
                     {account.currency}
@@ -108,12 +115,32 @@ const Accounts = () => {
                   <div className="ml-auto font-medium tabular-nums">
                     {formatCurrency(account.startingBalance, account.currency)}
                   </div>
+                  <button
+                    type="button"
+                    aria-label="Delete account"
+                    onClick={() => setAccountToDelete(account)}
+                    className="cursor-pointer rounded-md p-1.5 text-muted transition-colors hover:bg-surface-elevated hover:text-expense"
+                  >
+                    <Trash2 size={16} />
+                  </button>
                 </div>
               </li>
             ))}
           </ul>
         )}
       </Card>
+
+      <ConfirmDialog
+        open={!!accountToDelete}
+        onClose={() => setAccountToDelete(null)}
+        onConfirm={() => {
+          dispatch(accountRemoved(accountToDelete!.id));
+          setAccountToDelete(null);
+        }}
+        title={`Delete "${accountToDelete?.name}"?`}
+        description="This will permanently delete this account and all transactions linked to it. This action cannot be undone."
+        confirmLabel="Delete Account"
+      />
     </div>
   );
 };
