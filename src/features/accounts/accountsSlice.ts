@@ -1,7 +1,7 @@
-import { createSlice, createEntityAdapter, nanoid } from "@reduxjs/toolkit";
+import { createEntityAdapter, createSlice, nanoid } from "@reduxjs/toolkit";
 
-import type { Account } from "../../types";
 import type { RootState } from "../../app/store";
+import type { Account } from "../../types";
 
 const accountsAdapter = createEntityAdapter<Account>();
 

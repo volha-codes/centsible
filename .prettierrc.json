@@ -4,6 +4,11 @@
   "trailingComma": "all",
   "printWidth": 80,
   "endOfLine": "lf",
-  "plugins": ["prettier-plugin-tailwindcss"],
+  "plugins": [
+    "@ianvs/prettier-plugin-sort-imports",
+    "prettier-plugin-tailwindcss"
+  ],
+  "importOrder": ["<THIRD_PARTY_MODULES>", "", "^[.]"],
+  "importOrderTypeScriptVersion": "6.0.3",
   "tailwindStylesheet": "./src/index.css"
 }

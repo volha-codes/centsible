@@ -1,10 +1,10 @@
 import {
-  Home,
-  Wallet,
+  ChartNoAxesColumn,
   CreditCard,
   HandCoins,
-  ChartNoAxesColumn,
+  Home,
   Settings,
+  Wallet,
 } from "lucide-react";
 
 import Logo from "../Logo";
