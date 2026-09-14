@@ -5,6 +5,7 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import Button from "../../components/ui/Button";
 import Card from "../../components/ui/Card";
 import ConfirmDialog from "../../components/ui/ConfirmDialog";
+import Popover from "../../components/ui/Popover";
 import { formatCurrency } from "../../lib/formatCurrency";
 import type { Account } from "../../types";
 import AccountFields from "./AccountFields";
@@ -92,22 +93,33 @@ const Accounts = () => {
                   <div className="ml-auto font-medium tabular-nums">
                     {formatCurrency(account.startingBalance, account.currency)}
                   </div>
-                  <button
-                    type="button"
-                    aria-label="Edit account"
-                    onClick={() => setAccountToEdit(account)}
-                    className="cursor-pointer rounded-md p-1.5 text-muted transition-colors hover:bg-surface-elevated hover:text-primary"
-                  >
-                    <Pencil size={16} />
-                  </button>
-                  <button
-                    type="button"
-                    aria-label="Delete account"
-                    onClick={() => setAccountToDelete(account)}
-                    className="cursor-pointer rounded-md p-1.5 text-muted transition-colors hover:bg-surface-elevated hover:text-expense"
-                  >
-                    <Trash2 size={16} />
-                  </button>
+
+                  <Popover>
+                    {(close) => (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setAccountToEdit(account);
+                            close();
+                          }}
+                          className="flex w-full items-center gap-2 px-3 py-2 text-sm text-content hover:bg-surface"
+                        >
+                          <Pencil size={14} /> Edit
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setAccountToDelete(account);
+                            close();
+                          }}
+                          className="flex w-full items-center gap-2 px-3 py-2 text-sm text-expense hover:bg-surface"
+                        >
+                          <Trash2 size={14} /> Delete
+                        </button>
+                      </>
+                    )}
+                  </Popover>
                 </div>
               </li>
             ))}
