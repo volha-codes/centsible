@@ -1,20 +1,19 @@
-import { Plus, Trash2 } from "lucide-react";
+import { Pencil, Plus, Trash2 } from "lucide-react";
 import { useRef, useState, type FormEvent } from "react";
 
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import Button from "../../components/ui/Button";
 import Card from "../../components/ui/Card";
 import ConfirmDialog from "../../components/ui/ConfirmDialog";
-import Field from "../../components/ui/Field";
-import Input from "../../components/ui/Input";
-import Select from "../../components/ui/Select";
 import { formatCurrency } from "../../lib/formatCurrency";
 import type { Account } from "../../types";
+import AccountFields from "./AccountFields";
 import {
   accountAdded,
   accountRemoved,
   selectAllAccounts,
 } from "./accountsSlice";
+import EditAccountDialog from "./EditAccountDialog";
 
 const Accounts = () => {
   const dispatch = useAppDispatch();
@@ -26,6 +25,7 @@ const Accounts = () => {
   const [currency, setCurrency] = useState("PLN");
   const [startingBalance, setStartingBalance] = useState("");
   const [accountToDelete, setAccountToDelete] = useState<Account | null>(null);
+  const [accountToEdit, setAccountToEdit] = useState<Account | null>(null);
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -46,38 +46,15 @@ const Accounts = () => {
     <div className="flex items-start gap-5">
       <Card header="Add Account" className="min-w-95">
         <form onSubmit={handleSubmit} className="flex flex-col gap-3.5">
-          <Field label="Name">
-            <Input
-              required
-              type="text"
-              placeholder="e.g. Main Account"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              ref={nameInputRef}
-            />
-          </Field>
-          <Field label="Currency">
-            <Select
-              value={currency}
-              onChange={(e) => setCurrency(e.target.value)}
-            >
-              <option value="PLN">PLN</option>
-              <option value="EUR">EUR</option>
-              <option value="USD">USD</option>
-            </Select>
-          </Field>
-          <Field label="Starting Balance">
-            <Input
-              required
-              type="number"
-              placeholder="0.00"
-              value={startingBalance}
-              onChange={(e) => setStartingBalance(e.target.value)}
-              onKeyDown={(e) => {
-                if (["e", "E", "+"].includes(e.key)) e.preventDefault();
-              }}
-            />
-          </Field>
+          <AccountFields
+            name={name}
+            setName={setName}
+            currency={currency}
+            setCurrency={setCurrency}
+            startingBalance={startingBalance}
+            setStartingBalance={setStartingBalance}
+            nameInputRef={nameInputRef}
+          />
           <Button
             type="submit"
             className="flex w-auto items-center gap-1.5 self-start"
@@ -117,6 +94,14 @@ const Accounts = () => {
                   </div>
                   <button
                     type="button"
+                    aria-label="Edit account"
+                    onClick={() => setAccountToEdit(account)}
+                    className="cursor-pointer rounded-md p-1.5 text-muted transition-colors hover:bg-surface-elevated hover:text-primary"
+                  >
+                    <Pencil size={16} />
+                  </button>
+                  <button
+                    type="button"
                     aria-label="Delete account"
                     onClick={() => setAccountToDelete(account)}
                     className="cursor-pointer rounded-md p-1.5 text-muted transition-colors hover:bg-surface-elevated hover:text-expense"
@@ -130,17 +115,25 @@ const Accounts = () => {
         )}
       </Card>
 
-      <ConfirmDialog
-        open={!!accountToDelete}
-        onClose={() => setAccountToDelete(null)}
-        onConfirm={() => {
-          dispatch(accountRemoved(accountToDelete!.id));
-          setAccountToDelete(null);
-        }}
-        title={`Delete "${accountToDelete?.name}"?`}
-        description="This will permanently delete this account and all transactions linked to it. This action cannot be undone."
-        confirmLabel="Delete Account"
-      />
+      {accountToDelete && (
+        <ConfirmDialog
+          onClose={() => setAccountToDelete(null)}
+          onConfirm={() => {
+            dispatch(accountRemoved(accountToDelete!.id));
+            setAccountToDelete(null);
+          }}
+          title={`Delete "${accountToDelete?.name}"?`}
+          description="This will permanently delete this account and all transactions linked to it. This action cannot be undone."
+          confirmLabel="Delete Account"
+        />
+      )}
+
+      {accountToEdit && (
+        <EditAccountDialog
+          account={accountToEdit}
+          onClose={() => setAccountToEdit(null)}
+        />
+      )}
     </div>
   );
 };

@@ -7,8 +7,8 @@ import {
   Wallet,
 } from "lucide-react";
 
-import Logo from "../Logo";
 import { cn } from "../../lib/cn";
+import Logo from "../Logo";
 
 const NAV = [
   {
