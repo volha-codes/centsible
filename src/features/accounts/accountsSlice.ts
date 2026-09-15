@@ -22,6 +22,17 @@ const accountsSlice = createSlice({
   },
 });
 
+export function findDuplicateAccountName(
+  accounts: Account[],
+  name: string,
+  excludeId?: string,
+): boolean {
+  const normalized = name.trim().toLowerCase();
+  return accounts.some(
+    (a) => a.id !== excludeId && a.name.trim().toLowerCase() === normalized,
+  );
+}
+
 export const { accountAdded, accountUpdated, accountRemoved } =
   accountsSlice.actions;
 

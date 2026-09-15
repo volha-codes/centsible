@@ -13,6 +13,7 @@ import AccountFields from "./AccountFields";
 import {
   accountAdded,
   accountRemoved,
+  findDuplicateAccountName,
   selectAllAccounts,
 } from "./accountsSlice";
 import EditAccountDialog from "./EditAccountDialog";
@@ -28,9 +29,15 @@ const Accounts = () => {
   const [startingBalance, setStartingBalance] = useState("");
   const [accountToDelete, setAccountToDelete] = useState<Account | null>(null);
   const [accountToEdit, setAccountToEdit] = useState<Account | null>(null);
+  const [nameError, setNameError] = useState<string | null>(null);
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (findDuplicateAccountName(accounts, name)) {
+      setNameError("An account with this name already exists");
+      return;
+    }
+
     dispatch(
       accountAdded({
         name,
@@ -45,13 +52,19 @@ const Accounts = () => {
     nameInputRef.current?.focus();
   };
 
+  const handleNameChange = (value: string) => {
+    setName(value);
+    setNameError(null);
+  };
+
   return (
     <div className="flex items-start gap-5">
       <Card header="Add Account" className="min-w-95">
         <form onSubmit={handleSubmit} className="flex flex-col gap-3.5">
           <AccountFields
             name={name}
-            setName={setName}
+            setName={handleNameChange}
+            nameError={nameError}
             currency={currency}
             setCurrency={setCurrency}
             startingBalance={startingBalance}

@@ -7,6 +7,7 @@ import Select from "../../components/ui/Select";
 function AccountFields({
   name,
   setName,
+  nameError,
   currency,
   setCurrency,
   startingBalance,
@@ -15,6 +16,7 @@ function AccountFields({
 }: {
   name: string;
   setName: (v: string) => void;
+  nameError: string | null;
   currency: string;
   setCurrency: (v: string) => void;
   startingBalance: string;
@@ -23,7 +25,7 @@ function AccountFields({
 }) {
   return (
     <>
-      <Field label="Name">
+      <Field label="Name" error={nameError}>
         <Input
           required
           type="text"
