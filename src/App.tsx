@@ -1,25 +1,27 @@
 import { useState } from "react";
 
+import { useAppDispatch, useAppSelector } from "./app/hooks";
+import { selectToast } from "./app/store";
 import AppShell from "./components/layout/AppShell";
 import Toast from "./components/ui/Toast";
 import Accounts from "./features/accounts/Accounts";
+import { toastDismissed, toastShown } from "./features/ui/uiSlice";
 
 function App() {
+  const dispatch = useAppDispatch();
+  const toast = useAppSelector(selectToast);
   const [activeView, setActiveView] = useState("Accounts");
-  const [toast, setToast] = useState<{ id: number; message: string } | null>(
-    null,
-  );
 
   const handleNavigate = (label: string) => {
     if (label === "Accounts") {
       setActiveView(label);
       return;
     }
-    setToast({ id: Date.now(), message: `${label} is coming soon` });
+    dispatch(toastShown(`${label} is coming soon`));
   };
 
   const handleDismissToast = () => {
-    setToast(null);
+    dispatch(toastDismissed());
   };
 
   return (

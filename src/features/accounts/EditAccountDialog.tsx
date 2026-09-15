@@ -5,6 +5,7 @@ import { useAppDispatch } from "../../app/hooks";
 import Button from "../../components/ui/Button";
 import Modal from "../../components/ui/Modal";
 import type { Account } from "../../types";
+import { toastShown } from "../ui/uiSlice";
 import AccountFields from "./AccountFields";
 import { accountUpdated } from "./accountsSlice";
 
@@ -31,6 +32,8 @@ const EditAccountDialog = ({
         changes: { name, currency, startingBalance: Number(startingBalance) },
       }),
     );
+
+    dispatch(toastShown("Account updated", "success"));
 
     onClose();
   };

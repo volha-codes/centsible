@@ -8,6 +8,7 @@ import ConfirmDialog from "../../components/ui/ConfirmDialog";
 import Popover from "../../components/ui/Popover";
 import { formatCurrency } from "../../lib/formatCurrency";
 import type { Account } from "../../types";
+import { toastShown } from "../ui/uiSlice";
 import AccountFields from "./AccountFields";
 import {
   accountAdded,
@@ -37,6 +38,7 @@ const Accounts = () => {
         startingBalance: Number(startingBalance),
       }),
     );
+    dispatch(toastShown("Account added", "success"));
     setName("");
     setCurrency("PLN");
     setStartingBalance("");
@@ -133,6 +135,7 @@ const Accounts = () => {
           onConfirm={() => {
             dispatch(accountRemoved(accountToDelete!.id));
             setAccountToDelete(null);
+            dispatch(toastShown("Account deleted", "success"));
           }}
           title={`Delete "${accountToDelete?.name}"?`}
           description="This will permanently delete this account and all transactions linked to it. This action cannot be undone."

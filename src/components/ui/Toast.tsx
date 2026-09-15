@@ -1,13 +1,18 @@
-import { Construction } from "lucide-react";
+import { CircleCheck, Construction } from "lucide-react";
 import { useEffect } from "react";
 import { createPortal } from "react-dom";
+
+const VARIANT_ICON = {
+  info: { icon: Construction, className: "text-warning" },
+  success: { icon: CircleCheck, className: "text-income" },
+};
 
 function Toast({
   toast,
   onDismiss,
   duration = 3000,
 }: {
-  toast: { id: number; message: string } | null;
+  toast: { id: number; message: string; variant: "info" | "success" } | null;
   onDismiss: () => void;
   duration?: number;
 }) {
@@ -19,13 +24,15 @@ function Toast({
 
   if (!toast) return null;
 
+  const { icon: Icon, className } = VARIANT_ICON[toast.variant];
+
   return createPortal(
     <div
       key={toast.id}
       className="fixed right-6 bottom-6 z-50 overflow-hidden rounded-xl border border-border bg-surface-elevated shadow-lg"
     >
       <div className="flex items-center gap-2.5 px-4 py-3 text-sm text-content">
-        <Construction size={16} className="text-warning" />
+        <Icon size={16} className={className} />
         {toast.message}
       </div>
       <div
