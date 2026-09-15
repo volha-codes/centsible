@@ -58,8 +58,8 @@ const Accounts = () => {
   };
 
   return (
-    <div className="flex items-start gap-5">
-      <Card header="Add Account" className="min-w-95">
+    <div className="flex flex-col items-start gap-5 md:flex-row">
+      <Card header="Add Account" className="w-full md:w-auto md:min-w-95">
         <form onSubmit={handleSubmit} className="flex flex-col gap-3.5">
           <AccountFields
             name={name}
@@ -90,7 +90,7 @@ const Accounts = () => {
             </span>
           </div>
         }
-        className="flex-1"
+        className="w-full md:flex-1"
       >
         {accounts.length === 0 ? (
           <div className="text-sm text-muted">No accounts yet.</div>
