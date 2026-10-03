@@ -1,7 +1,9 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
+export type ToastVariant = "info" | "success" | "error";
+
 interface UiState {
-  toast: { id: number; message: string; variant: "info" | "success" } | null;
+  toast: { id: number; message: string; variant: ToastVariant } | null;
 }
 
 const initialState: UiState = {
@@ -13,7 +15,7 @@ const uiSlice = createSlice({
   initialState,
   reducers: {
     toastShown: {
-      prepare: (message: string, variant: "info" | "success" = "info") => ({
+      prepare: (message: string, variant: ToastVariant = "info") => ({
         payload: { id: Date.now(), message, variant },
       }),
       reducer: (
@@ -21,7 +23,7 @@ const uiSlice = createSlice({
         action: PayloadAction<{
           id: number;
           message: string;
-          variant: "info" | "success";
+          variant: ToastVariant;
         }>,
       ) => {
         state.toast = action.payload;
