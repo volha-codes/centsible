@@ -35,6 +35,8 @@ const Accounts = () => {
   const [accountToDelete, setAccountToDelete] = useState<Account | null>(null);
   const [accountToEdit, setAccountToEdit] = useState<Account | null>(null);
   const [nameError, setNameError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     if (status === "idle") void dispatch(fetchAccounts());
@@ -42,12 +44,14 @@ const Accounts = () => {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (isSubmitting) return;
 
     if (findDuplicateAccountName(accounts, name)) {
       setNameError("An account with this name already exists");
       return;
     }
 
+    setIsSubmitting(true);
     try {
       await dispatch(
         createAccount({
@@ -64,6 +68,8 @@ const Accounts = () => {
       nameInputRef.current?.focus();
     } catch {
       dispatch(toastShown("Failed to add account", "error"));
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -168,6 +174,7 @@ const Accounts = () => {
           <Button
             type="submit"
             className="flex w-auto items-center gap-1.5 self-start"
+            loading={isSubmitting}
           >
             <Plus size={16} />
             Add Account
@@ -197,18 +204,21 @@ const Accounts = () => {
         <ConfirmDialog
           onClose={() => setAccountToDelete(null)}
           onConfirm={async () => {
+            setIsDeleting(true);
             try {
               await dispatch(deleteAccount(accountToDelete.id)).unwrap();
               dispatch(toastShown("Account deleted", "success"));
             } catch {
               dispatch(toastShown("Failed to delete account", "error"));
             } finally {
+              setIsDeleting(false);
               setAccountToDelete(null);
             }
           }}
           title={`Delete "${accountToDelete?.name}"?`}
           description="This will permanently delete this account and all transactions linked to it. This action cannot be undone."
           confirmLabel="Delete Account"
+          loading={isDeleting}
         />
       )}
 

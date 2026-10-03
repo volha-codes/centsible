@@ -9,12 +9,14 @@ const ConfirmDialog = ({
   title,
   description,
   confirmLabel = "Confirm",
+  loading = false,
 }: {
   onClose: () => void;
   onConfirm: () => void;
   title: string;
   description: string;
   confirmLabel?: string;
+  loading?: boolean;
 }) => {
   return (
     <Modal open onClose={onClose}>
@@ -25,11 +27,11 @@ const ConfirmDialog = ({
         <h2 className="text-lg font-semibold text-content">{title}</h2>
         <p className="text-sm text-muted">{description}</p>
         <div className="flex justify-end gap-2.5">
-          <Button variant="secondary" onClick={onClose}>
+          <Button variant="secondary" onClick={onClose} disabled={loading}>
             Cancel
           </Button>
 
-          <Button variant="danger" onClick={onConfirm}>
+          <Button variant="danger" onClick={onConfirm} loading={loading}>
             {confirmLabel}
           </Button>
         </div>
