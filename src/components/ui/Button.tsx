@@ -26,7 +26,7 @@ function Button({
     <button
       type={type}
       className={cn(
-        "inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl bg-primary px-5.5 py-3 font-medium text-background transition-colors duration-200 focus:outline-none focus-visible:ring focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background active:bg-primary/80 enabled:hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50",
+        "relative inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl bg-primary px-5.5 py-3 font-medium text-background transition-colors duration-200 focus:outline-none focus-visible:ring focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background active:bg-primary/80 enabled:hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50",
         VARIANT_CLASSES[variant],
         className,
       )}
@@ -34,8 +34,15 @@ function Button({
       disabled={loading || props.disabled}
       aria-busy={loading}
     >
-      {loading && <LoaderCircle className="animate-spin" size={16} />}
-      {children}
+      <span
+        className={cn(
+          "inline-flex items-center justify-center gap-2",
+          loading && "invisible",
+        )}
+      >
+        {children}
+      </span>
+      {loading && <LoaderCircle className="absolute animate-spin" size={16} />}
     </button>
   );
 }
