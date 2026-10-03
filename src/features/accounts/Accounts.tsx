@@ -37,10 +37,19 @@ const Accounts = () => {
   const [nameError, setNameError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [justAddedId, setJustAddedId] = useState<string | null>(null);
 
   useEffect(() => {
     if (status === "idle") void dispatch(fetchAccounts());
   }, [status, dispatch]);
+
+  useEffect(() => {
+    if (!justAddedId) return;
+
+    document
+      .getElementById(`account-${justAddedId}`)
+      ?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, [justAddedId]);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -53,7 +62,7 @@ const Accounts = () => {
 
     setIsSubmitting(true);
     try {
-      await dispatch(
+      const created = await dispatch(
         createAccount({
           name,
           currency,
@@ -65,7 +74,13 @@ const Accounts = () => {
       setName("");
       setCurrency("PLN");
       setStartingBalance("");
-      nameInputRef.current?.focus();
+
+      if (window.matchMedia("(pointer: coarse)").matches) {
+        nameInputRef.current?.blur();
+        setJustAddedId(created.id);
+      } else {
+        nameInputRef.current?.focus();
+      }
     } catch {
       dispatch(toastShown("Failed to add account", "error"));
     } finally {
@@ -111,7 +126,11 @@ const Accounts = () => {
       return (
         <ul className="flex flex-col gap-3.5">
           {accounts.map((account) => (
-            <li key={account.id} className="flex flex-col gap-3.5">
+            <li
+              key={account.id}
+              id={`account-${account.id}`}
+              className="flex flex-col gap-3.5"
+            >
               <hr className="border-border" />
 
               <div className="flex items-center gap-2.5 py-1.5">
