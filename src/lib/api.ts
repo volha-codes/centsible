@@ -21,7 +21,7 @@ export async function request<T>(
   }
 
   if (!response.ok) {
-    console.error(`[api] ${method} ${url} → ${response.status}`);
+    console.error(`[api] ${method} ${url} -> ${response.status}`);
     throw new Error(`Request failed: ${response.status}`);
   }
 
