@@ -1,8 +1,9 @@
 import accountsReducer, {
-  accountAdded,
-  accountRemoved,
-  accountUpdated,
+  createAccount,
+  deleteAccount,
+  fetchAccounts,
   findDuplicateAccountName,
+  updateAccount,
 } from "./accountsSlice";
 
 describe("findDuplicateAccountName", () => {
@@ -77,12 +78,90 @@ describe("findDuplicateAccountName", () => {
 });
 
 describe("accountsSlice reducer", () => {
-  it("adds an account", () => {
+  it("sets status to loading while accounts are being fetched", () => {
     const initialState = accountsReducer(undefined, { type: "unknown" });
 
     const nextState = accountsReducer(
       initialState,
-      accountAdded({
+      fetchAccounts.pending("", undefined),
+    );
+
+    expect(nextState.status).toBe("loading");
+  });
+
+  it("clears the previous error when a new fetch starts", () => {
+    const failedState = accountsReducer(
+      undefined,
+      fetchAccounts.rejected(
+        new Error("Failed to fetch accounts"),
+        "",
+        undefined,
+      ),
+    );
+
+    expect(failedState.error).not.toBeNull();
+
+    const nextState = accountsReducer(
+      failedState,
+      fetchAccounts.pending("", undefined),
+    );
+
+    expect(nextState.error).toBeNull();
+  });
+
+  it("sets status to succeeded and populates accounts when fetch is successful", () => {
+    const initialState = accountsReducer(undefined, { type: "unknown" });
+
+    const accounts = [
+      {
+        id: "1",
+        name: "Main Account",
+        currency: "PLN",
+        startingBalance: 0,
+      },
+    ];
+
+    const nextState = accountsReducer(
+      initialState,
+      fetchAccounts.fulfilled(accounts, "", undefined),
+    );
+
+    expect(nextState.status).toBe("succeeded");
+    expect(nextState.ids).toHaveLength(1);
+    expect(nextState.entities["1"]).toEqual(accounts[0]);
+  });
+
+  it("sets status to failed and populates error when fetch fails", () => {
+    const initialState = accountsReducer(undefined, { type: "unknown" });
+
+    const nextState = accountsReducer(
+      initialState,
+      fetchAccounts.rejected(
+        new Error("Failed to fetch accounts"),
+        "",
+        undefined,
+      ),
+    );
+
+    expect(nextState.status).toBe("failed");
+    expect(nextState.error).toBe(
+      "Couldn't load accounts. Check your connection and try again.",
+    );
+  });
+
+  it("creates a new account when createAccount is fulfilled", () => {
+    const initialState = accountsReducer(undefined, { type: "unknown" });
+
+    const newAccount = {
+      id: "1",
+      name: "Main Account",
+      currency: "PLN",
+      startingBalance: 0,
+    };
+
+    const nextState = accountsReducer(
+      initialState,
+      createAccount.fulfilled(newAccount, "", {
         name: "Main Account",
         currency: "PLN",
         startingBalance: 0,
@@ -90,49 +169,115 @@ describe("accountsSlice reducer", () => {
     );
 
     expect(nextState.ids).toHaveLength(1);
+    expect(nextState.entities["1"]).toEqual(newAccount);
+  });
 
-    const addedId = nextState.ids[0];
-    expect(nextState.entities[addedId]).toMatchObject({
+  it("updates an existing account when updateAccount is fulfilled", () => {
+    const initialState = accountsReducer(undefined, { type: "unknown" });
+
+    const existingAccount = {
+      id: "1",
       name: "Main Account",
       currency: "PLN",
       startingBalance: 0,
-    });
-  });
+    };
 
-  it("updates an existing account", () => {
-    const initialState = accountsReducer(undefined, { type: "unknown" });
-    const withAccount = accountsReducer(
+    const stateWithAccount = accountsReducer(
       initialState,
-      accountAdded({
+      createAccount.fulfilled(existingAccount, "", {
         name: "Main Account",
         currency: "PLN",
         startingBalance: 0,
       }),
     );
-    const id = withAccount.ids[0];
+
+    const updatedAccount = {
+      id: "1",
+      name: "Updated Account",
+      currency: "USD",
+      startingBalance: 100,
+    };
 
     const nextState = accountsReducer(
-      withAccount,
-      accountUpdated({ id, changes: { name: "Renamed" } }),
+      stateWithAccount,
+      updateAccount.fulfilled(updatedAccount, "", {
+        id: "1",
+        changes: {
+          name: "Updated Account",
+          currency: "USD",
+          startingBalance: 100,
+        },
+      }),
     );
 
-    expect(nextState.entities[id]?.name).toBe("Renamed");
+    expect(nextState.ids).toHaveLength(1);
+    expect(nextState.entities["1"]).toEqual(updatedAccount);
   });
 
-  it("removes an account", () => {
+  it("deletes an existing account when deleteAccount is fulfilled", () => {
     const initialState = accountsReducer(undefined, { type: "unknown" });
-    const withAccount = accountsReducer(
+
+    const existingAccount = {
+      id: "1",
+      name: "Main Account",
+      currency: "PLN",
+      startingBalance: 0,
+    };
+
+    const stateWithAccount = accountsReducer(
       initialState,
-      accountAdded({
+      createAccount.fulfilled(existingAccount, "", {
         name: "Main Account",
         currency: "PLN",
         startingBalance: 0,
       }),
     );
-    const id = withAccount.ids[0];
 
-    const nextState = accountsReducer(withAccount, accountRemoved(id));
+    const nextState = accountsReducer(
+      stateWithAccount,
+      deleteAccount.fulfilled("1", "", "1"),
+    );
 
     expect(nextState.ids).toHaveLength(0);
+    expect(nextState.entities["1"]).toBeUndefined();
+  });
+
+  it("keeps existing accounts when createAccount is fulfilled", () => {
+    const initialState = accountsReducer(undefined, { type: "unknown" });
+
+    const existingAccount = {
+      id: "1",
+      name: "Main Account",
+      currency: "PLN",
+      startingBalance: 0,
+    };
+
+    const stateWithAccount = accountsReducer(
+      initialState,
+      fetchAccounts.fulfilled([existingAccount], "", undefined),
+    );
+
+    expect(stateWithAccount.ids).toHaveLength(1);
+    expect(stateWithAccount.entities["1"]).toEqual(existingAccount);
+
+    const newAccount = {
+      id: "2",
+      name: "Savings Account",
+      currency: "USD",
+      startingBalance: 100,
+    };
+
+    const nextState = accountsReducer(
+      stateWithAccount,
+      createAccount.fulfilled(newAccount, "", {
+        name: "Savings Account",
+        currency: "USD",
+        startingBalance: 100,
+      }),
+    );
+
+    expect(nextState.ids).toHaveLength(2);
+    expect(nextState.entities["1"]).toEqual(existingAccount);
+    expect(nextState.entities["2"]).toEqual(newAccount);
   });
 });

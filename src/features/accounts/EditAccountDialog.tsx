@@ -8,9 +8,9 @@ import type { Account } from "../../types";
 import { toastShown } from "../ui/uiSlice";
 import AccountFields from "./AccountFields";
 import {
-  accountUpdated,
   findDuplicateAccountName,
   selectAllAccounts,
+  updateAccount,
 } from "./accountsSlice";
 
 const EditAccountDialog = ({
@@ -29,25 +29,34 @@ const EditAccountDialog = ({
     account.startingBalance.toString(),
   );
   const [nameError, setNameError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (isSubmitting) return;
 
     if (findDuplicateAccountName(accounts, name, account.id)) {
       setNameError("An account with this name already exists");
       return;
     }
 
-    dispatch(
-      accountUpdated({
-        id: account.id,
-        changes: { name, currency, startingBalance: Number(startingBalance) },
-      }),
-    );
+    setIsSubmitting(true);
+    try {
+      await dispatch(
+        updateAccount({
+          id: account.id,
+          changes: { name, currency, startingBalance: Number(startingBalance) },
+        }),
+      ).unwrap();
 
-    dispatch(toastShown("Account updated", "success"));
-
-    onClose();
+      dispatch(toastShown("Account updated", "success"));
+      onClose();
+    } catch {
+      dispatch(toastShown("Failed to update account", "error"));
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleNameChange = (value: string) => {
@@ -78,7 +87,9 @@ const EditAccountDialog = ({
             <Button type="button" variant="secondary" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit">Save Changes</Button>
+            <Button type="submit" loading={isSubmitting}>
+              Save Changes
+            </Button>
           </div>
         </form>
       </div>

@@ -1,10 +1,13 @@
-import { CircleCheck, Construction } from "lucide-react";
+import { CircleAlert, CircleCheck, Construction } from "lucide-react";
 import { useEffect } from "react";
 import { createPortal } from "react-dom";
+
+import type { ToastVariant } from "../../features/ui/uiSlice";
 
 const VARIANT_ICON = {
   info: { icon: Construction, className: "text-warning" },
   success: { icon: CircleCheck, className: "text-income" },
+  error: { icon: CircleAlert, className: "text-expense" },
 };
 
 function Toast({
@@ -12,7 +15,7 @@ function Toast({
   onDismiss,
   duration = 3000,
 }: {
-  toast: { id: number; message: string; variant: "info" | "success" } | null;
+  toast: { id: number; message: string; variant: ToastVariant } | null;
   onDismiss: () => void;
   duration?: number;
 }) {
