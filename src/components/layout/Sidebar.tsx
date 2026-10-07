@@ -4,10 +4,14 @@ import {
   HandCoins,
   Home,
   Settings,
+  Tags,
   Wallet,
 } from "lucide-react";
 import { useEffect } from "react";
+import { NavLink } from "react-router";
 
+import { useAppDispatch } from "../../app/hooks";
+import { toastShown } from "../../features/ui/uiSlice";
 import { cn } from "../../lib/cn";
 import Logo from "../Logo";
 
@@ -18,7 +22,13 @@ const NAV = [
   },
   {
     label: "Accounts",
+    to: "/accounts",
     icon: Wallet,
+  },
+  {
+    label: "Categories",
+    to: "/categories",
+    icon: Tags,
   },
   {
     label: "Transactions",
@@ -38,17 +48,9 @@ const NAV = [
   },
 ];
 
-const Sidebar = ({
-  open,
-  onClose,
-  activeLabel,
-  onNavigate,
-}: {
-  open: boolean;
-  onClose: () => void;
-  activeLabel: string;
-  onNavigate: (label: string) => void;
-}) => {
+const Sidebar = ({ open, onClose }: { open: boolean; onClose: () => void }) => {
+  const dispatch = useAppDispatch();
+
   useEffect(() => {
     if (!open) return;
 
@@ -80,17 +82,29 @@ const Sidebar = ({
           {NAV.map((item) => {
             const Icon = item.icon;
 
-            return (
+            return item.to ? (
+              <NavLink
+                to={item.to}
+                key={item.label}
+                className={({ isActive }) =>
+                  cn(
+                    "flex h-10 cursor-pointer items-center gap-2 rounded-xl px-3 transition-colors duration-200",
+                    isActive
+                      ? "bg-surface text-primary"
+                      : "text-muted hover:bg-surface hover:text-primary",
+                  )
+                }
+                onClick={onClose}
+              >
+                <Icon className="h-4 w-4" />
+                <span>{item.label}</span>
+              </NavLink>
+            ) : (
               <button
                 key={item.label}
-                className={cn(
-                  "flex h-10 cursor-pointer items-center gap-2 rounded-xl px-3 transition-colors duration-200",
-                  activeLabel === item.label
-                    ? "bg-surface text-primary"
-                    : "text-muted hover:bg-surface hover:text-primary",
-                )}
+                className="flex h-10 cursor-default items-center gap-2 rounded-xl px-3 text-muted transition-colors duration-200"
                 onClick={() => {
-                  onNavigate(item.label);
+                  dispatch(toastShown(`${item.label} is coming soon`));
                   onClose();
                 }}
               >

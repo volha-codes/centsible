@@ -4,25 +4,12 @@ import { useState, type ReactNode } from "react";
 import Logo from "../Logo";
 import Sidebar from "./Sidebar";
 
-const AppShell = ({
-  children,
-  activeLabel,
-  onNavigate,
-}: {
-  children: ReactNode;
-  activeLabel: string;
-  onNavigate: (label: string) => void;
-}) => {
+const AppShell = ({ children }: { children: ReactNode }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
     <div className="flex min-h-screen overflow-hidden">
-      <Sidebar
-        activeLabel={activeLabel}
-        onNavigate={onNavigate}
-        open={sidebarOpen}
-        onClose={() => setSidebarOpen(false)}
-      />
+      <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
         <header className="flex items-center gap-3 border-b border-border p-4 md:hidden">
