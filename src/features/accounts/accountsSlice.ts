@@ -7,6 +7,7 @@ import {
 import type { RootState } from "../../app/store";
 import { request } from "../../lib/api";
 import type { Account } from "../../types";
+import { logout } from "../auth/authSlice";
 
 type RequestStatus = "idle" | "loading" | "succeeded" | "failed";
 
@@ -77,7 +78,8 @@ const accountsSlice = createSlice({
       })
       .addCase(deleteAccount.fulfilled, (state, action) => {
         accountsAdapter.removeOne(state, action.payload);
-      });
+      })
+      .addCase(logout.fulfilled, () => initialState);
   },
 });
 

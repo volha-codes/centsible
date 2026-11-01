@@ -7,6 +7,7 @@ import {
 import type { RootState } from "../../app/store";
 import { request } from "../../lib/api";
 import type { Category, CategoryType } from "../../types";
+import { logout } from "../auth/authSlice";
 
 type RequestStatus = "idle" | "loading" | "succeeded" | "failed";
 
@@ -77,7 +78,8 @@ const categoriesSlice = createSlice({
       })
       .addCase(deleteCategory.fulfilled, (state, action) => {
         categoriesAdapter.removeOne(state, action.payload);
-      });
+      })
+      .addCase(logout.fulfilled, () => initialState);
   },
 });
 
