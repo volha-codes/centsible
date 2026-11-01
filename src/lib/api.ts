@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:3000";
+const API_URL = import.meta.env.VITE_API_URL ?? "/api";
 
 export async function request<T>(
   path: string,
@@ -23,6 +23,10 @@ export async function request<T>(
   if (!response.ok) {
     console.error(`[api] ${method} ${url} -> ${response.status}`);
     throw new Error(`Request failed: ${response.status}`);
+  }
+
+  if (response.status === 204) {
+    return undefined as T;
   }
 
   return response.json() as Promise<T>;
