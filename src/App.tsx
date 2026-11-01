@@ -10,7 +10,6 @@ import Accounts from "./features/accounts/Accounts";
 import { fetchMe, selectAuthStatus } from "./features/auth/authSlice";
 import Login from "./features/auth/Login";
 import Register from "./features/auth/Register";
-import Categories from "./features/categories/Categories";
 import { selectToast, toastDismissed } from "./features/ui/uiSlice";
 
 function App() {
@@ -40,14 +39,6 @@ function App() {
             element={
               <Page title="Accounts">
                 <Accounts />
-              </Page>
-            }
-          />
-          <Route
-            path="/categories"
-            element={
-              <Page title="Categories">
-                <Categories />
               </Page>
             }
           />

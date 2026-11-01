@@ -29,7 +29,6 @@ const NAV = [
   },
   {
     label: "Categories",
-    to: "/categories",
     icon: Tags,
   },
   {
