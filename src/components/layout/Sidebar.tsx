@@ -3,11 +3,17 @@ import {
   CreditCard,
   HandCoins,
   Home,
+  LogOut,
   Settings,
+  Tags,
   Wallet,
 } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { NavLink, useNavigate } from "react-router";
 
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { logout, selectUser } from "../../features/auth/authSlice";
+import { toastShown } from "../../features/ui/uiSlice";
 import { cn } from "../../lib/cn";
 import Logo from "../Logo";
 
@@ -18,7 +24,12 @@ const NAV = [
   },
   {
     label: "Accounts",
+    to: "/accounts",
     icon: Wallet,
+  },
+  {
+    label: "Categories",
+    icon: Tags,
   },
   {
     label: "Transactions",
@@ -38,17 +49,27 @@ const NAV = [
   },
 ];
 
-const Sidebar = ({
-  open,
-  onClose,
-  activeLabel,
-  onNavigate,
-}: {
-  open: boolean;
-  onClose: () => void;
-  activeLabel: string;
-  onNavigate: (label: string) => void;
-}) => {
+const Sidebar = ({ open, onClose }: { open: boolean; onClose: () => void }) => {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const user = useAppSelector(selectUser);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+
+    try {
+      await dispatch(logout()).unwrap();
+      dispatch(toastShown("You successfully signed out.", "success"));
+      navigate("/login", { replace: true });
+    } catch {
+      dispatch(toastShown("Failed to sign out. Please try again.", "error"));
+    } finally {
+      setIsLoggingOut(false);
+      onClose();
+    }
+  };
+
   useEffect(() => {
     if (!open) return;
 
@@ -80,17 +101,29 @@ const Sidebar = ({
           {NAV.map((item) => {
             const Icon = item.icon;
 
-            return (
+            return item.to ? (
+              <NavLink
+                to={item.to}
+                key={item.label}
+                className={({ isActive }) =>
+                  cn(
+                    "flex h-10 cursor-pointer items-center gap-2 rounded-xl px-3 transition-colors duration-200",
+                    isActive
+                      ? "bg-surface text-primary"
+                      : "text-muted hover:bg-surface hover:text-primary",
+                  )
+                }
+                onClick={onClose}
+              >
+                <Icon className="h-4 w-4" />
+                <span>{item.label}</span>
+              </NavLink>
+            ) : (
               <button
                 key={item.label}
-                className={cn(
-                  "flex h-10 cursor-pointer items-center gap-2 rounded-xl px-3 transition-colors duration-200",
-                  activeLabel === item.label
-                    ? "bg-surface text-primary"
-                    : "text-muted hover:bg-surface hover:text-primary",
-                )}
+                className="flex h-10 cursor-default items-center gap-2 rounded-xl px-3 text-muted transition-colors duration-200"
                 onClick={() => {
-                  onNavigate(item.label);
+                  dispatch(toastShown(`${item.label} is coming soon`));
                   onClose();
                 }}
               >
@@ -100,6 +133,25 @@ const Sidebar = ({
             );
           })}
         </nav>
+
+        <div className="mt-auto flex flex-col gap-3 border-t border-border pt-4">
+          <div className="flex min-w-0 flex-col px-3">
+            <span className="truncate text-sm font-medium text-content">
+              {user?.firstName}
+            </span>
+            <span className="truncate text-xs text-muted">{user?.email}</span>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="flex h-10 cursor-pointer items-center gap-2 rounded-xl px-3 text-muted transition-colors duration-200 hover:bg-surface hover:text-expense disabled:cursor-not-allowed disabled:opacity-50"
+            disabled={isLoggingOut}
+          >
+            <LogOut className="h-4 w-4" />
+            <span>Sign out</span>
+          </button>
+        </div>
       </aside>
 
       {open && (

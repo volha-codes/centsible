@@ -5,12 +5,20 @@ export interface Account {
   startingBalance: number;
 }
 
+export interface User {
+  id: string;
+  email: string;
+  firstName: string;
+}
+
+export type CategoryType = "income" | "expense";
+
 export interface Category {
   id: string;
   name: string;
   icon: string;
   color: string;
-  type: "income" | "expense";
+  type: CategoryType;
 }
 
 export interface Transaction {

@@ -1,34 +1,54 @@
-import { useState } from "react";
+import { useEffect } from "react";
+import { Navigate, Route, Routes } from "react-router";
 
 import { useAppDispatch, useAppSelector } from "./app/hooks";
-import { selectToast } from "./app/store";
-import AppShell from "./components/layout/AppShell";
+import Page from "./components/layout/Page";
+import ProtectedLayout from "./components/layout/ProtectedLayout";
+import PublicLayout from "./components/layout/PublicLayout";
 import Toast from "./components/ui/Toast";
 import Accounts from "./features/accounts/Accounts";
-import { toastDismissed, toastShown } from "./features/ui/uiSlice";
+import { fetchMe, selectAuthStatus } from "./features/auth/authSlice";
+import Login from "./features/auth/Login";
+import Register from "./features/auth/Register";
+import { selectToast, toastDismissed } from "./features/ui/uiSlice";
 
 function App() {
   const dispatch = useAppDispatch();
   const toast = useAppSelector(selectToast);
-  const [activeView, setActiveView] = useState("Accounts");
-
-  const handleNavigate = (label: string) => {
-    if (label === "Accounts") {
-      setActiveView(label);
-      return;
-    }
-    dispatch(toastShown(`${label} is coming soon`));
-  };
+  const status = useAppSelector(selectAuthStatus);
 
   const handleDismissToast = () => {
     dispatch(toastDismissed());
   };
 
+  useEffect(() => {
+    if (status === "unknown") void dispatch(fetchMe());
+  }, [status, dispatch]);
+
   return (
-    <AppShell activeLabel={activeView} onNavigate={handleNavigate}>
-      <Accounts />
-      <Toast toast={toast} onDismiss={handleDismissToast} />
-    </AppShell>
+    <>
+      <Routes>
+        <Route element={<PublicLayout />}>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+        </Route>
+
+        <Route element={<ProtectedLayout />}>
+          <Route
+            path="/accounts"
+            element={
+              <Page title="Accounts">
+                <Accounts />
+              </Page>
+            }
+          />
+        </Route>
+
+        <Route path="*" element={<Navigate to="/accounts" replace />} />
+      </Routes>
+
+      {toast && <Toast toast={toast} onDismiss={handleDismissToast} />}
+    </>
   );
 }
 
