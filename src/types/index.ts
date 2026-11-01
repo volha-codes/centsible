@@ -5,6 +5,12 @@ export interface Account {
   startingBalance: number;
 }
 
+export interface User {
+  id: string;
+  email: string;
+  firstName: string;
+}
+
 export type CategoryType = "income" | "expense";
 
 export interface Category {

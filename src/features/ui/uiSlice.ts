@@ -1,5 +1,7 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
+import type { RootState } from "../../app/store";
+
 export type ToastVariant = "info" | "success" | "error";
 
 interface UiState {
@@ -34,6 +36,8 @@ const uiSlice = createSlice({
     },
   },
 });
+
+export const selectToast = (state: RootState) => state.ui.toast;
 
 export const { toastShown, toastDismissed } = uiSlice.actions;
 export default uiSlice.reducer;

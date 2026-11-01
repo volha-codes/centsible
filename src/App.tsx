@@ -1,13 +1,12 @@
 import { Navigate, Route, Routes } from "react-router";
 
 import { useAppDispatch, useAppSelector } from "./app/hooks";
-import { selectToast } from "./app/store";
 import AppShell from "./components/layout/AppShell";
 import Page from "./components/layout/Page";
 import Toast from "./components/ui/Toast";
 import Accounts from "./features/accounts/Accounts";
 import Categories from "./features/categories/Categories";
-import { toastDismissed } from "./features/ui/uiSlice";
+import { selectToast, toastDismissed } from "./features/ui/uiSlice";
 
 function App() {
   const dispatch = useAppDispatch();
