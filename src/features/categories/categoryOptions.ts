@@ -15,6 +15,25 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
+import type { CategoryType } from "../../types";
+
+export const TYPE_OPTIONS = [
+  {
+    value: "expense",
+    label: "Expense",
+    activeClassName: "bg-expense text-background",
+  },
+  {
+    value: "income",
+    label: "Income",
+    activeClassName: "bg-income text-background",
+  },
+] satisfies {
+  value: CategoryType;
+  label: string;
+  activeClassName: string;
+}[];
+
 export const CATEGORY_ICONS = {
   "shopping-cart": ShoppingCart,
   car: Car,

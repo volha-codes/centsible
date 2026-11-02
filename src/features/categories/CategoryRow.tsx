@@ -8,15 +8,17 @@ const ACTION_CLASSES =
 
 const CategoryRow = ({
   category,
+  id,
   onEdit,
   onDelete,
 }: {
   category: Category;
+  id: string;
   onEdit: () => void;
   onDelete: () => void;
 }) => {
   return (
-    <div className="flex items-center gap-3 py-1.5">
+    <li id={id} className="flex items-center gap-3 py-3">
       <CategoryIcon icon={category.icon} color={category.color} />
       <div className="min-w-0 flex-1 truncate font-medium">{category.name}</div>
 
@@ -36,7 +38,7 @@ const CategoryRow = ({
       >
         <Trash2 size={14} />
       </button>
-    </div>
+    </li>
   );
 };
 
