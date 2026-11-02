@@ -4,11 +4,13 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import Button from "../../components/ui/Button";
 import Card from "../../components/ui/Card";
+import ConfirmDialog from "../../components/ui/ConfirmDialog";
 import SegmentedControl from "../../components/ui/SegmentedControl";
-import type { CategoryType } from "../../types";
+import type { Category, CategoryType } from "../../types";
 import { toastShown } from "../ui/uiSlice";
 import {
   createCategory,
+  deleteCategory,
   fetchCategories,
   findDuplicateCategoryNameAndType,
   selectAllCategories,
@@ -18,6 +20,7 @@ import {
 import CategoryFields from "./CategoryFields";
 import { DEFAULT_COLOR, DEFAULT_ICON } from "./categoryOptions";
 import CategoryRow from "./CategoryRow";
+import EditCategoryDialog from "./EditCategoryDialog";
 
 const Categories = () => {
   const dispatch = useAppDispatch();
@@ -34,6 +37,11 @@ const Categories = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [justAddedId, setJustAddedId] = useState<string | null>(null);
   const [activeType, setActiveType] = useState<CategoryType>("expense");
+  const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(
+    null,
+  );
+  const [categoryToEdit, setCategoryToEdit] = useState<Category | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const expenseCategories = categories.filter((c) => c.type === "expense");
   const incomeCategories = categories.filter((c) => c.type === "income");
@@ -146,8 +154,12 @@ const Categories = () => {
               key={category.id}
               id={`category-${category.id}`}
               category={category}
-              onEdit={() => {}}
-              onDelete={() => {}}
+              onEdit={() => {
+                setCategoryToEdit(category);
+              }}
+              onDelete={() => {
+                setCategoryToDelete(category);
+              }}
             />
           ))}
         </ul>
@@ -209,6 +221,36 @@ const Categories = () => {
           {content()}
         </div>
       </Card>
+
+      {categoryToDelete && (
+        <ConfirmDialog
+          onClose={() => setCategoryToDelete(null)}
+          onConfirm={async () => {
+            setIsDeleting(true);
+            try {
+              await dispatch(deleteCategory(categoryToDelete.id)).unwrap();
+              dispatch(toastShown("Category deleted", "success"));
+            } catch {
+              dispatch(toastShown("Failed to delete category", "error"));
+            } finally {
+              setIsDeleting(false);
+              setCategoryToDelete(null);
+            }
+          }}
+          title={`Delete "${categoryToDelete.name}" category?`}
+          description="This will permanently delete this category. This action cannot be undone."
+          confirmLabel="Delete Category"
+          loading={isDeleting}
+        />
+      )}
+
+      {categoryToEdit && (
+        <EditCategoryDialog
+          category={categoryToEdit}
+          onClose={() => setCategoryToEdit(null)}
+          onUpdated={setActiveType}
+        />
+      )}
     </div>
   );
 };
