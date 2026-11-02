@@ -4,25 +4,9 @@ import Field from "../../components/ui/Field";
 import Input from "../../components/ui/Input";
 import SegmentedControl from "../../components/ui/SegmentedControl";
 import type { CategoryType } from "../../types";
+import { TYPE_OPTIONS } from "./categoryOptions";
 import ColorPicker from "./ColorPicker";
 import IconPicker from "./IconPicker";
-
-const TYPE_OPTIONS = [
-  {
-    value: "expense",
-    label: "Expense",
-    activeClassName: "bg-expense text-background",
-  },
-  {
-    value: "income",
-    label: "Income",
-    activeClassName: "bg-income text-background",
-  },
-] satisfies {
-  value: CategoryType;
-  label: string;
-  activeClassName: string;
-}[];
 
 function FieldGroup({
   label,
