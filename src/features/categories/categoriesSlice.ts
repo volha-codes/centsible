@@ -11,7 +11,9 @@ import { logout } from "../auth/authSlice";
 
 type RequestStatus = "idle" | "loading" | "succeeded" | "failed";
 
-const categoriesAdapter = createEntityAdapter<Category>();
+const categoriesAdapter = createEntityAdapter<Category>({
+  sortComparer: (a, b) => a.name.localeCompare(b.name),
+});
 
 const initialState = categoriesAdapter.getInitialState({
   status: "idle" as RequestStatus,
@@ -84,6 +86,21 @@ const categoriesSlice = createSlice({
 });
 
 export function hasDuplicateCategory(
+  categories: Category[],
+  name: string,
+  type: CategoryType,
+  excludeId?: string,
+): boolean {
+  const normalized = name.trim().toLowerCase();
+  return categories.some(
+    (c) =>
+      c.id !== excludeId &&
+      c.name.trim().toLowerCase() === normalized &&
+      c.type === type,
+  );
+}
+
+export function findDuplicateCategoryNameAndType(
   categories: Category[],
   name: string,
   type: CategoryType,
