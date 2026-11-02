@@ -16,6 +16,15 @@
   --color-expense: #fb7185;
   --color-warning: #fbbf24;
   --color-placeholder: #5c5c60;
+
+  --color-cat-red: #fb7185;
+  --color-cat-amber: #fbbf24;
+  --color-cat-teal: #2dd4bf;
+  --color-cat-lime: #c4f542;
+  --color-cat-purple: #a78bfa;
+  --color-cat-blue: #38bdf8;
+  --color-cat-orange: #fb923c;
+  --color-cat-pink: #f472b6;
 }
 
 @layer base {
