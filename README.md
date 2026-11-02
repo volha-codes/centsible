@@ -6,6 +6,8 @@ Budget tracker and planner with AI-powered analytics. Work in progress.
 
 ![Accounts](docs/screenshots/accounts.png) ![Mobile](docs/screenshots/accounts-mobile.png)
 
+![Categories](docs/screenshots/categories.png) ![Mobile](docs/screenshots/categories-mobile.png)
+
 ## Status
 
 You can sign up, sign in and sign out. Each user manages their own accounts and
