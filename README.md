@@ -8,13 +8,14 @@ Budget tracker and planner with AI-powered analytics. Work in progress.
 
 ## Status
 
-You can sign up, sign in and sign out. Each user manages their own accounts: add, edit
-and delete them, with duplicate-name validation, currency formatting, loading, error
-and empty states and a responsive layout. Data is stored in PostgreSQL through the
-API, so it survives a page refresh.
+You can sign up, sign in and sign out. Each user manages their own accounts and
+categories: add, edit and delete them, with duplicate-name validation, loading, error
+and empty states and a responsive layout. Accounts have a currency and a starting
+balance. Categories are either income or expense, with an icon and a colour, and are
+listed under Expense and Income tabs. Data is stored in PostgreSQL through the API, so
+it survives a page refresh.
 
-The Categories API is ready, but its screen is not built yet. Not built yet:
-Categories screen, Transactions, Budgets, Reports, AI insights.
+Not built yet: Transactions, Budgets, Reports, AI insights.
 
 The demo runs on free hosting and sign-up has no email verification, so please don't
 use a real password or real financial data. The API sleeps when idle, so the first
@@ -55,16 +56,16 @@ npm run test:run    # single run
 
 Reducers are tested through the thunk lifecycle actions, and the Accounts screen is
 tested with a mocked `fetch`: loading, error with retry, empty state, creating an
-account and a double click sending a single request. The sign-in flow is not covered
-by tests yet.
+account and a double click sending a single request. The sign-in flow and the
+Categories screen are not covered by tests yet.
 
 ## Roadmap
 
 - [x] Backend + persistence (NestJS, Prisma, PostgreSQL)
 - [x] Authentication
-- [ ] Categories screen
+- [x] Categories
+- [ ] Tests for the sign-in flow and categories
 - [ ] Transactions
-- [ ] Tests for the sign-in flow
 - [ ] Budgets and Reports
 - [ ] AI-powered insights
 - [ ] React Native mobile app, sharing types and Redux slices with the web app
