@@ -85,21 +85,6 @@ const categoriesSlice = createSlice({
   },
 });
 
-export function hasDuplicateCategory(
-  categories: Category[],
-  name: string,
-  type: CategoryType,
-  excludeId?: string,
-): boolean {
-  const normalized = name.trim().toLowerCase();
-  return categories.some(
-    (c) =>
-      c.id !== excludeId &&
-      c.name.trim().toLowerCase() === normalized &&
-      c.type === type,
-  );
-}
-
 export function findDuplicateCategoryNameAndType(
   categories: Category[],
   name: string,
