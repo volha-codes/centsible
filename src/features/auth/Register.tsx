@@ -39,12 +39,13 @@ const Register = () => {
     e.preventDefault();
     if (isSubmitting) return;
 
+    setError(null);
+
     if (firstNameError || emailValidationError || passwordError) {
       setTouched({ firstName: true, email: true, password: true });
       return;
     }
 
-    setError(null);
     setEmailError(null);
     setIsSubmitting(true);
     try {
@@ -94,7 +95,10 @@ const Register = () => {
             autoComplete="given-name"
             placeholder="e.g. Anna"
             value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
+            onChange={(e) => {
+              setFirstName(e.target.value);
+              setError(null);
+            }}
             onBlur={() => markTouched("firstName")}
           />
         </Field>
@@ -111,6 +115,7 @@ const Register = () => {
             onChange={(e) => {
               setEmail(e.target.value);
               setEmailError(null);
+              setError(null);
             }}
             onBlur={() => markTouched("email")}
           />
@@ -127,7 +132,10 @@ const Register = () => {
             autoComplete="new-password"
             placeholder="Create a password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              setError(null);
+            }}
             onBlur={() => markTouched("password")}
           />
         </Field>

@@ -35,12 +35,13 @@ const Login = () => {
     e.preventDefault();
     if (isSubmitting) return;
 
+    setError(null);
+
     if (emailError || passwordError) {
       setTouched({ email: true, password: true });
       return;
     }
 
-    setError(null);
     setIsSubmitting(true);
     try {
       await dispatch(login({ email, password })).unwrap();
@@ -77,7 +78,10 @@ const Login = () => {
             autoComplete="email"
             placeholder="you@example.com"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              setError(null);
+            }}
             onBlur={() => markTouched("email")}
           />
         </Field>
@@ -88,7 +92,10 @@ const Login = () => {
             autoComplete="current-password"
             placeholder="Your password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              setError(null);
+            }}
             onBlur={() => markTouched("password")}
           />
         </Field>
