@@ -48,3 +48,33 @@ export function getRegisterErrorMessage(error: ApiErrorPayload): {
     message: "Couldn't create the account. Please try again.",
   };
 }
+
+export function validateFirstName(value: string): string | null {
+  const name = value.trim();
+
+  if (!name) {
+    return "Enter your first name.";
+  } else if (name.length > 50) {
+    return "Use 50 characters or fewer.";
+  }
+
+  return null;
+}
+
+export function validateEmail(value: string): string | null {
+  const email = value.trim();
+
+  if (!/^\S+@\S+\.\S+$/.test(email)) {
+    return "Enter a valid email address.";
+  }
+
+  return null;
+}
+
+export function validatePassword(password: string): string | null {
+  if (password.length < 8) {
+    return "Use at least 8 characters.";
+  }
+
+  return null;
+}
