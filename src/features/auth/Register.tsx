@@ -7,7 +7,12 @@ import Field from "../../components/ui/Field";
 import Input from "../../components/ui/Input";
 import type { ApiErrorPayload } from "../../lib/api";
 import { toastShown } from "../ui/uiSlice";
-import { getRegisterErrorMessage } from "./authErrors";
+import {
+  getRegisterErrorMessage,
+  validateEmail,
+  validateFirstName,
+  validatePassword,
+} from "./authErrors";
 import AuthLayout from "./AuthLayout";
 import { register } from "./authSlice";
 
@@ -20,10 +25,24 @@ const Register = () => {
   const [emailError, setEmailError] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [touched, setTouched] = useState({
+    firstName: false,
+    email: false,
+    password: false,
+  });
+
+  const firstNameError = validateFirstName(firstName);
+  const emailValidationError = validateEmail(email);
+  const passwordError = validatePassword(password);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (isSubmitting) return;
+
+    if (firstNameError || emailValidationError || passwordError) {
+      setTouched({ firstName: true, email: true, password: true });
+      return;
+    }
 
     setError(null);
     setEmailError(null);
@@ -44,6 +63,10 @@ const Register = () => {
     }
   };
 
+  const markTouched = (field: keyof typeof touched) => {
+    setTouched((prev) => ({ ...prev, [field]: true }));
+  };
+
   return (
     <AuthLayout
       title="Create an account"
@@ -56,8 +79,15 @@ const Register = () => {
         </>
       }
     >
-      <form onSubmit={handleSubmit} className="flex flex-col gap-3.5">
-        <Field label="First name">
+      <form
+        noValidate
+        onSubmit={handleSubmit}
+        className="flex flex-col gap-3.5"
+      >
+        <Field
+          label="First name"
+          error={touched.firstName ? firstNameError : null}
+        >
           <Input
             required
             type="text"
@@ -65,9 +95,13 @@ const Register = () => {
             placeholder="e.g. Anna"
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
+            onBlur={() => markTouched("firstName")}
           />
         </Field>
-        <Field label="Email" error={emailError}>
+        <Field
+          label="Email"
+          error={emailError ?? (touched.email ? emailValidationError : null)}
+        >
           <Input
             required
             type="email"
@@ -78,17 +112,23 @@ const Register = () => {
               setEmail(e.target.value);
               setEmailError(null);
             }}
+            onBlur={() => markTouched("email")}
           />
         </Field>
-        <Field label="Password">
+        <Field
+          label="Password"
+          error={touched.password ? passwordError : null}
+          hint="At least 8 characters"
+        >
           <Input
             required
             type="password"
             minLength={8}
             autoComplete="new-password"
-            placeholder="At least 8 characters"
+            placeholder="Create a password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            onBlur={() => markTouched("password")}
           />
         </Field>
 
