@@ -5,7 +5,9 @@ import { useAppDispatch } from "../../app/hooks";
 import Button from "../../components/ui/Button";
 import Field from "../../components/ui/Field";
 import Input from "../../components/ui/Input";
+import type { ApiErrorPayload } from "../../lib/api";
 import { toastShown } from "../ui/uiSlice";
+import { getRegisterErrorMessage } from "./authErrors";
 import AuthLayout from "./AuthLayout";
 import { register } from "./authSlice";
 
@@ -15,6 +17,7 @@ const Register = () => {
   const [firstName, setFirstName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [emailError, setEmailError] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -23,13 +26,19 @@ const Register = () => {
     if (isSubmitting) return;
 
     setError(null);
+    setEmailError(null);
     setIsSubmitting(true);
     try {
       await dispatch(register({ firstName, email, password })).unwrap();
       dispatch(toastShown("You successfully created an account.", "success"));
       navigate("/accounts", { replace: true });
-    } catch {
-      setError("Couldn't create the account. Please try again.");
+    } catch (error) {
+      const errorData = getRegisterErrorMessage(error as ApiErrorPayload);
+      if (errorData.field === "email") {
+        setEmailError(errorData.message);
+      } else {
+        setError(errorData.message);
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -58,14 +67,17 @@ const Register = () => {
             onChange={(e) => setFirstName(e.target.value)}
           />
         </Field>
-        <Field label="Email">
+        <Field label="Email" error={emailError}>
           <Input
             required
             type="email"
             autoComplete="email"
             placeholder="you@example.com"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              setEmailError(null);
+            }}
           />
         </Field>
         <Field label="Password">
