@@ -5,7 +5,9 @@ import { useAppDispatch } from "../../app/hooks";
 import Button from "../../components/ui/Button";
 import Field from "../../components/ui/Field";
 import Input from "../../components/ui/Input";
+import type { ApiErrorPayload } from "../../lib/api";
 import { toastShown } from "../ui/uiSlice";
+import { getLoginErrorMessage } from "./authErrors";
 import AuthLayout from "./AuthLayout";
 import { login } from "./authSlice";
 
@@ -27,8 +29,8 @@ const Login = () => {
       await dispatch(login({ email, password })).unwrap();
       dispatch(toastShown("You successfully signed in.", "success"));
       navigate("/accounts", { replace: true });
-    } catch {
-      setError("Invalid email or password");
+    } catch (error) {
+      setError(getLoginErrorMessage(error as ApiErrorPayload));
     } finally {
       setIsSubmitting(false);
     }
