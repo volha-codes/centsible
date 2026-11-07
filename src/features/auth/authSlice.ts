@@ -1,7 +1,11 @@
 import { createAsyncThunk, createSlice, isAnyOf } from "@reduxjs/toolkit";
 
 import type { RootState } from "../../app/store";
-import { request } from "../../lib/api";
+import {
+  request,
+  toApiErrorPayload,
+  type ApiErrorPayload,
+} from "../../lib/api";
 import type { User } from "../../types";
 
 type AuthStatus = "unknown" | "authenticated" | "anonymous";
@@ -24,23 +28,35 @@ export const fetchMe = createAsyncThunk("auth/fetchMe", () =>
   request<User>("/auth/me"),
 );
 
-export const login = createAsyncThunk(
-  "auth/login",
-  (credentials: Credentials) =>
-    request<User>("/auth/login", {
+export const login = createAsyncThunk<
+  User,
+  Credentials,
+  { rejectValue: ApiErrorPayload }
+>("auth/login", async (credentials, { rejectWithValue }) => {
+  try {
+    return await request<User>("/auth/login", {
       method: "POST",
       body: JSON.stringify(credentials),
-    }),
-);
+    });
+  } catch (error) {
+    return rejectWithValue(toApiErrorPayload(error));
+  }
+});
 
-export const register = createAsyncThunk(
-  "auth/register",
-  (registerData: RegisterData) =>
-    request<User>("/auth/register", {
+export const register = createAsyncThunk<
+  User,
+  RegisterData,
+  { rejectValue: ApiErrorPayload }
+>("auth/register", async (registerData, { rejectWithValue }) => {
+  try {
+    return await request<User>("/auth/register", {
       method: "POST",
       body: JSON.stringify(registerData),
-    }),
-);
+    });
+  } catch (error) {
+    return rejectWithValue(toApiErrorPayload(error));
+  }
+});
 
 export const logout = createAsyncThunk("auth/logout", () =>
   request<void>("/auth/logout", {
