@@ -78,3 +78,11 @@ export function validatePassword(password: string): string | null {
 
   return null;
 }
+
+export function validatePasswordRequired(password: string): string | null {
+  if (!password) {
+    return "Enter your password.";
+  }
+
+  return null;
+}
