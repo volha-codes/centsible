@@ -13,7 +13,7 @@ import {
   validatePasswordRequired,
 } from "./authErrors";
 import AuthLayout from "./AuthLayout";
-import { login } from "./authSlice";
+import { login, loginDemo } from "./authSlice";
 
 const Login = () => {
   const dispatch = useAppDispatch();
@@ -22,6 +22,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDemoLoading, setIsDemoLoading] = useState(false);
   const [touched, setTouched] = useState({ email: false, password: false });
 
   const emailError = validateEmail(email);
@@ -31,9 +32,23 @@ const Login = () => {
     setTouched((prev) => ({ ...prev, [field]: true }));
   };
 
+  const handleDemo = async () => {
+    if (isSubmitting || isDemoLoading) return;
+
+    setError(null);
+    setIsDemoLoading(true);
+    try {
+      await dispatch(loginDemo()).unwrap();
+      navigate("/accounts", { replace: true });
+    } catch (error) {
+      setError(getLoginErrorMessage(error as ApiErrorPayload));
+      setIsDemoLoading(false);
+    }
+  };
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (isSubmitting) return;
+    if (isSubmitting || isDemoLoading) return;
 
     setError(null);
 
@@ -106,10 +121,32 @@ const Login = () => {
           </p>
         )}
 
-        <Button type="submit" loading={isSubmitting} className="w-full">
+        <Button
+          type="submit"
+          loading={isSubmitting}
+          disabled={isDemoLoading}
+          className="w-full"
+        >
           Sign in
         </Button>
       </form>
+
+      <div className="flex flex-col gap-2 border-t border-border pt-4">
+        <p className="text-sm text-muted">
+          Just looking around? Explore the app with sample accounts, categories
+          and transactions. No sign-up needed.
+        </p>
+        <Button
+          type="button"
+          variant="secondary"
+          loading={isDemoLoading}
+          disabled={isSubmitting}
+          onClick={handleDemo}
+          className="w-full"
+        >
+          Try the demo
+        </Button>
+      </div>
     </AuthLayout>
   );
 };
