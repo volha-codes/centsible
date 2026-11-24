@@ -4,6 +4,7 @@ import { useState, type FormEvent } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import Button from "../../components/ui/Button";
 import Modal from "../../components/ui/Modal";
+import { fromCents, toCents } from "../../lib/money";
 import type { Account } from "../../types";
 import { toastShown } from "../ui/uiSlice";
 import AccountFields from "./AccountFields";
@@ -26,7 +27,7 @@ const EditAccountDialog = ({
   const [name, setName] = useState(account.name);
   const [currency, setCurrency] = useState(account.currency);
   const [startingBalance, setStartingBalance] = useState(
-    account.startingBalance.toString(),
+    fromCents(account.startingBalance),
   );
   const [nameError, setNameError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -46,7 +47,11 @@ const EditAccountDialog = ({
       await dispatch(
         updateAccount({
           id: account.id,
-          changes: { name, currency, startingBalance: Number(startingBalance) },
+          changes: {
+            name,
+            currency,
+            startingBalance: toCents(startingBalance),
+          },
         }),
       ).unwrap();
 

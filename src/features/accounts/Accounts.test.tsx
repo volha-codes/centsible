@@ -68,7 +68,8 @@ describe("accounts actions", () => {
             id: "1",
             name: "Main Account",
             currency: "PLN",
-            startingBalance: 3200,
+            startingBalance: 320000,
+            balance: 320000,
           },
         ],
       });
@@ -102,7 +103,8 @@ describe("accounts actions", () => {
           id: "1",
           name: "Main Account",
           currency: "PLN",
-          startingBalance: 3200,
+          startingBalance: 320000,
+          balance: 320000,
         }),
       });
 
@@ -118,6 +120,7 @@ describe("accounts actions", () => {
     await user.click(screen.getByRole("button", { name: "Add Account" }));
 
     await screen.findByText("Main Account");
+    expect(screen.getByText("3,200.00 zł")).toBeInTheDocument();
 
     expect(fetchMock).toHaveBeenCalledTimes(2);
     expect(fetchMock).toHaveBeenCalledWith(
@@ -127,7 +130,7 @@ describe("accounts actions", () => {
         body: JSON.stringify({
           name: "Main Account",
           currency: "PLN",
-          startingBalance: 3200,
+          startingBalance: 320000,
         }),
       }),
     );

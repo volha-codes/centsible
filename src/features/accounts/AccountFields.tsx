@@ -46,6 +46,7 @@ function AccountFields({
         <Input
           required
           type="number"
+          step="0.01"
           placeholder="0.00"
           value={startingBalance}
           onChange={(e) => setStartingBalance(e.target.value)}

@@ -3,7 +3,10 @@ export interface Account {
   name: string;
   currency: string;
   startingBalance: number;
+  balance: number;
 }
+
+export type AccountInput = Omit<Account, "id" | "balance">;
 
 export interface User {
   id: string;
@@ -26,9 +29,12 @@ export interface Transaction {
   accountId: string;
   categoryId: string;
   amount: number;
-  date: number;
+  date: string;
   note: string;
+  createdAt: string;
 }
+
+export type TransactionInput = Omit<Transaction, "id" | "createdAt">;
 
 interface RecurringRuleBase {
   id: string;

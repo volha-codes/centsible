@@ -10,11 +10,12 @@ export function formatCurrency(amount: number, currency: string): string {
   const number = new Intl.NumberFormat("en-US", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
-  }).format(amount);
+  }).format(Math.abs(amount));
 
   const symbol = CURRENCY_SYMBOLS[currency] || currency;
+  const sign = amount < 0 ? "-" : "";
 
   return SYMBOL_AFTER.has(currency)
-    ? `${number} ${symbol}`
-    : `${symbol}${number}`;
+    ? `${sign}${number} ${symbol}`
+    : `${sign}${symbol}${number}`;
 }

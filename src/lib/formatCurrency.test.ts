@@ -18,6 +18,6 @@ describe("formatCurrency", () => {
   });
 
   it("keeps the minus sign for negative amounts", () => {
-    expect(formatCurrency(-3240, "EUR")).toBe("€-3,240.00");
+    expect(formatCurrency(-3240, "EUR")).toBe("-€3,240.00");
   });
 });

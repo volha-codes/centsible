@@ -6,7 +6,7 @@ import Button from "../../components/ui/Button";
 import Card from "../../components/ui/Card";
 import ConfirmDialog from "../../components/ui/ConfirmDialog";
 import Popover from "../../components/ui/Popover";
-import { formatCurrency } from "../../lib/formatCurrency";
+import { formatMoney, toCents } from "../../lib/money";
 import type { Account } from "../../types";
 import { toastShown } from "../ui/uiSlice";
 import AccountFields from "./AccountFields";
@@ -66,7 +66,7 @@ const Accounts = () => {
         createAccount({
           name,
           currency,
-          startingBalance: Number(startingBalance),
+          startingBalance: toCents(startingBalance),
         }),
       ).unwrap();
 
@@ -139,7 +139,7 @@ const Accounts = () => {
                   {account.currency}
                 </div>
                 <div className="ml-auto font-medium tabular-nums">
-                  {formatCurrency(account.startingBalance, account.currency)}
+                  {formatMoney(account.balance, account.currency)}
                 </div>
 
                 <Popover>
