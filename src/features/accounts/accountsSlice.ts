@@ -6,7 +6,7 @@ import {
 
 import type { RootState } from "../../app/store";
 import { request } from "../../lib/api";
-import type { Account } from "../../types";
+import type { Account, AccountInput } from "../../types";
 import { logout } from "../auth/authSlice";
 
 type RequestStatus = "idle" | "loading" | "succeeded" | "failed";
@@ -24,7 +24,7 @@ export const fetchAccounts = createAsyncThunk("accounts/fetchAll", () =>
 
 export const createAccount = createAsyncThunk(
   "accounts/create",
-  (account: Omit<Account, "id">) =>
+  (account: AccountInput) =>
     request<Account>("/accounts", {
       method: "POST",
       body: JSON.stringify(account),
@@ -33,7 +33,7 @@ export const createAccount = createAsyncThunk(
 
 export const updateAccount = createAsyncThunk(
   "accounts/update",
-  ({ id, changes }: { id: string; changes: Partial<Omit<Account, "id">> }) =>
+  ({ id, changes }: { id: string; changes: Partial<AccountInput> }) =>
     request<Account>(`/accounts/${id}`, {
       method: "PATCH",
       body: JSON.stringify(changes),
@@ -58,7 +58,7 @@ const accountsSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchAccounts.pending, (state) => {
-        state.status = "loading";
+        if (state.status !== "succeeded") state.status = "loading";
         state.error = null;
       })
       .addCase(fetchAccounts.fulfilled, (state, action) => {

@@ -14,6 +14,7 @@ describe("findDuplicateAccountName", () => {
         name: "Main Account",
         currency: "PLN",
         startingBalance: 0,
+        balance: 0,
       },
     ];
 
@@ -27,6 +28,7 @@ describe("findDuplicateAccountName", () => {
         name: "Main Account",
         currency: "PLN",
         startingBalance: 0,
+        balance: 0,
       },
     ];
 
@@ -40,6 +42,7 @@ describe("findDuplicateAccountName", () => {
         name: "Main Account",
         currency: "PLN",
         startingBalance: 0,
+        balance: 0,
       },
     ];
 
@@ -53,6 +56,7 @@ describe("findDuplicateAccountName", () => {
         name: "Main Account",
         currency: "PLN",
         startingBalance: 0,
+        balance: 0,
       },
     ];
 
@@ -66,6 +70,7 @@ describe("findDuplicateAccountName", () => {
         name: "Main Account",
         currency: "PLN",
         startingBalance: 0,
+        balance: 0,
       },
     ];
 
@@ -118,6 +123,7 @@ describe("accountsSlice reducer", () => {
         name: "Main Account",
         currency: "PLN",
         startingBalance: 0,
+        balance: 0,
       },
     ];
 
@@ -157,6 +163,7 @@ describe("accountsSlice reducer", () => {
       name: "Main Account",
       currency: "PLN",
       startingBalance: 0,
+      balance: 0,
     };
 
     const nextState = accountsReducer(
@@ -180,6 +187,7 @@ describe("accountsSlice reducer", () => {
       name: "Main Account",
       currency: "PLN",
       startingBalance: 0,
+      balance: 0,
     };
 
     const stateWithAccount = accountsReducer(
@@ -196,6 +204,7 @@ describe("accountsSlice reducer", () => {
       name: "Updated Account",
       currency: "USD",
       startingBalance: 100,
+      balance: 100,
     };
 
     const nextState = accountsReducer(
@@ -222,6 +231,7 @@ describe("accountsSlice reducer", () => {
       name: "Main Account",
       currency: "PLN",
       startingBalance: 0,
+      balance: 0,
     };
 
     const stateWithAccount = accountsReducer(
@@ -250,6 +260,7 @@ describe("accountsSlice reducer", () => {
       name: "Main Account",
       currency: "PLN",
       startingBalance: 0,
+      balance: 0,
     };
 
     const stateWithAccount = accountsReducer(
@@ -265,6 +276,7 @@ describe("accountsSlice reducer", () => {
       name: "Savings Account",
       currency: "USD",
       startingBalance: 100,
+      balance: 100,
     };
 
     const nextState = accountsReducer(

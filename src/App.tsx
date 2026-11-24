@@ -11,6 +11,7 @@ import { fetchMe, selectAuthStatus } from "./features/auth/authSlice";
 import Login from "./features/auth/Login";
 import Register from "./features/auth/Register";
 import Categories from "./features/categories/Categories";
+import Transactions from "./features/transactions/Transactions";
 import { selectToast, toastDismissed } from "./features/ui/uiSlice";
 
 function App() {
@@ -48,6 +49,14 @@ function App() {
             element={
               <Page title="Categories">
                 <Categories />
+              </Page>
+            }
+          />
+          <Route
+            path="/transactions"
+            element={
+              <Page title="Transactions">
+                <Transactions />
               </Page>
             }
           />
