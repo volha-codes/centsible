@@ -5,7 +5,11 @@ import {
 } from "@reduxjs/toolkit";
 
 import type { RootState } from "../../app/store";
-import { request } from "../../lib/api";
+import {
+  request,
+  toApiErrorPayload,
+  type ApiErrorPayload,
+} from "../../lib/api";
 import type { Category, CategoryType } from "../../types";
 import { logout } from "../auth/authSlice";
 
@@ -42,16 +46,21 @@ export const updateCategory = createAsyncThunk(
     }),
 );
 
-export const deleteCategory = createAsyncThunk(
-  "categories/delete",
-  async (id: string) => {
+export const deleteCategory = createAsyncThunk<
+  string,
+  string,
+  { rejectValue: ApiErrorPayload }
+>("categories/delete", async (id, { rejectWithValue }) => {
+  try {
     await request<Category>(`/categories/${id}`, {
       method: "DELETE",
     });
 
     return id;
-  },
-);
+  } catch (error) {
+    return rejectWithValue(toApiErrorPayload(error));
+  }
+});
 
 const categoriesSlice = createSlice({
   name: "categories",
