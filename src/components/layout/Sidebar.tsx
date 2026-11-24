@@ -34,6 +34,7 @@ const NAV = [
   },
   {
     label: "Transactions",
+    to: "/transactions",
     icon: CreditCard,
   },
   {
