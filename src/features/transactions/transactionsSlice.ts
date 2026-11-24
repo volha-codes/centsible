@@ -85,7 +85,7 @@ const transactionsSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchTransactions.pending, (state) => {
-        if (state.status !== "succeeded") state.status = "loading";
+        state.status = "loading";
         state.error = null;
       })
       .addCase(fetchTransactions.fulfilled, (state, action) => {

@@ -1,12 +1,10 @@
 import { Pencil, Trash2 } from "lucide-react";
 
+import Popover from "../../components/ui/Popover";
 import { cn } from "../../lib/cn";
 import { formatMoney } from "../../lib/money";
 import type { Account, Category, Transaction } from "../../types";
 import CategoryIcon from "../categories/CategoryIcon";
-
-const ACTION_CLASSES =
-  "flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg bg-surface-elevated text-muted transition-colors duration-200 focus:outline-none focus-visible:ring focus-visible:ring-primary";
 
 const TransactionRow = ({
   transaction,
@@ -56,22 +54,32 @@ const TransactionRow = ({
           : formatMoney(-transaction.amount, currency)}
       </div>
 
-      <button
-        type="button"
-        aria-label={`Edit ${title}`}
-        onClick={onEdit}
-        className={`${ACTION_CLASSES} hover:text-content`}
-      >
-        <Pencil size={14} />
-      </button>
-      <button
-        type="button"
-        aria-label={`Delete ${title}`}
-        onClick={onDelete}
-        className={`${ACTION_CLASSES} hover:text-expense`}
-      >
-        <Trash2 size={14} />
-      </button>
+      <Popover>
+        {(close) => (
+          <>
+            <button
+              type="button"
+              onClick={() => {
+                onEdit();
+                close();
+              }}
+              className="flex w-full items-center gap-2 px-3 py-2 text-sm text-content hover:bg-surface"
+            >
+              <Pencil size={14} /> Edit
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                onDelete();
+                close();
+              }}
+              className="flex w-full items-center gap-2 px-3 py-2 text-sm text-expense hover:bg-surface"
+            >
+              <Trash2 size={14} /> Delete
+            </button>
+          </>
+        )}
+      </Popover>
     </li>
   );
 };
