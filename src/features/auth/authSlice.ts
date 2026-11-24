@@ -58,6 +58,18 @@ export const register = createAsyncThunk<
   }
 });
 
+export const loginDemo = createAsyncThunk<
+  User,
+  void,
+  { rejectValue: ApiErrorPayload }
+>("auth/loginDemo", async (_, { rejectWithValue }) => {
+  try {
+    return await request<User>("/auth/demo", { method: "POST" });
+  } catch (error) {
+    return rejectWithValue(toApiErrorPayload(error));
+  }
+});
+
 export const logout = createAsyncThunk("auth/logout", () =>
   request<void>("/auth/logout", {
     method: "POST",
@@ -71,7 +83,12 @@ const authSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addMatcher(
-        isAnyOf(fetchMe.fulfilled, login.fulfilled, register.fulfilled),
+        isAnyOf(
+          fetchMe.fulfilled,
+          login.fulfilled,
+          register.fulfilled,
+          loginDemo.fulfilled,
+        ),
         (state, action) => {
           state.user = action.payload;
           state.status = "authenticated";
