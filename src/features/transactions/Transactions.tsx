@@ -27,7 +27,10 @@ import {
   selectCategoriesStatus,
 } from "../categories/categoriesSlice";
 import { toastShown } from "../ui/uiSlice";
+import AccountStrip from "./AccountStrip";
 import EditTransactionDialog from "./EditTransactionDialog";
+import MonthSummary from "./MonthSummary";
+import { summarizeByCurrency } from "./summary";
 import TransactionFields from "./TransactionFields";
 import TransactionRow from "./TransactionRow";
 import {
@@ -252,180 +255,214 @@ const Transactions = () => {
     );
   };
 
-  return (
-    <div className="flex flex-col items-start gap-5 xl:flex-row">
-      <Card header="Add Transaction" className="w-full xl:w-auto xl:min-w-95">
-        <form onSubmit={handleSubmit} className="flex flex-col gap-3.5">
-          {needsSetup && (
-            <p className="text-sm text-muted">
-              Add an{" "}
-              <Link to="/accounts" className="text-primary hover:underline">
-                account
-              </Link>{" "}
-              and a{" "}
-              <Link to="/categories" className="text-primary hover:underline">
-                category
-              </Link>{" "}
-              first.
-            </p>
-          )}
+  const summaries = summarizeByCurrency(
+    filterTransactions(transactions, categories, {
+      ...filters,
+      categoryId: "",
+      type: "all",
+    }),
+    categories,
+    accounts,
+  );
+  const monthLabel =
+    monthOptions.find((o) => o.value === filters.month)?.label ?? filters.month;
 
-          <TransactionFields
-            type={type}
-            setType={setType}
-            amount={amount}
-            setAmount={handleAmountChange}
-            amountError={amountError}
-            accountId={selectedAccountId}
-            setAccountId={setAccountId}
-            categoryId={selectedCategoryId}
-            setCategoryId={setCategoryId}
-            date={date}
-            setDate={setDate}
-            note={note}
-            setNote={setNote}
+  return (
+    <div className="flex flex-col gap-5">
+      {accounts.length > 0 && (
+        <section className="flex flex-col gap-3">
+          <AccountStrip
             accounts={accounts}
-            categories={categories}
-            amountInputRef={amountInputRef}
+            selectedId={filters.accountId}
+            onSelect={(accountId) =>
+              setFilters((prev) => ({ ...prev, accountId }))
+            }
+          />
+          {status === "succeeded" && (
+            <MonthSummary monthLabel={monthLabel} summaries={summaries} />
+          )}
+        </section>
+      )}
+
+      <div className="flex flex-col items-start gap-5 xl:flex-row">
+        <Card header="Add Transaction" className="w-full xl:w-auto xl:min-w-95">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-3.5">
+            {needsSetup && (
+              <p className="text-sm text-muted">
+                Add an{" "}
+                <Link to="/accounts" className="text-primary hover:underline">
+                  account
+                </Link>{" "}
+                and a{" "}
+                <Link to="/categories" className="text-primary hover:underline">
+                  category
+                </Link>{" "}
+                first.
+              </p>
+            )}
+
+            <TransactionFields
+              type={type}
+              setType={setType}
+              amount={amount}
+              setAmount={handleAmountChange}
+              amountError={amountError}
+              accountId={selectedAccountId}
+              setAccountId={setAccountId}
+              categoryId={selectedCategoryId}
+              setCategoryId={setCategoryId}
+              date={date}
+              setDate={setDate}
+              note={note}
+              setNote={setNote}
+              accounts={accounts}
+              categories={categories}
+              amountInputRef={amountInputRef}
+            />
+
+            <Button
+              type="submit"
+              className="w-full"
+              loading={isSubmitting}
+              disabled={needsSetup}
+            >
+              <Plus size={16} />
+              Add Transaction
+            </Button>
+          </form>
+        </Card>
+
+        <Card
+          header={
+            <div className="flex items-center justify-between">
+              <span>Transactions</span>
+
+              {status === "succeeded" && (
+                <span className="text-sm font-normal text-muted">
+                  {visibleTransactions.length}{" "}
+                  {visibleTransactions.length === 1
+                    ? "transaction"
+                    : "transactions"}
+                </span>
+              )}
+            </div>
+          }
+          className="w-full xl:min-w-0 xl:flex-1"
+        >
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="w-36">
+              <Select
+                aria-label="Month"
+                value={filters.month}
+                onChange={(e) =>
+                  setFilters((prev) => ({ ...prev, month: e.target.value }))
+                }
+              >
+                {monthOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </Select>
+            </div>
+            <div className="w-44">
+              <Select
+                aria-label="Filter by account"
+                value={filters.accountId}
+                onChange={(e) =>
+                  setFilters((prev) => ({ ...prev, accountId: e.target.value }))
+                }
+              >
+                <option value="">All accounts</option>
+                {accounts.map((account) => (
+                  <option key={account.id} value={account.id}>
+                    {account.name}
+                  </option>
+                ))}
+              </Select>
+            </div>
+            <div className="w-44">
+              <Select
+                aria-label="Filter by category"
+                value={filters.categoryId}
+                onChange={(e) =>
+                  setFilters((prev) => ({
+                    ...prev,
+                    categoryId: e.target.value,
+                  }))
+                }
+              >
+                <option value="">All categories</option>
+                <optgroup label="Expense">
+                  {categories
+                    .filter((c) => c.type === "expense")
+                    .map((category) => (
+                      <option key={category.id} value={category.id}>
+                        {category.name}
+                      </option>
+                    ))}
+                </optgroup>
+                <optgroup label="Income">
+                  {categories
+                    .filter((c) => c.type === "income")
+                    .map((category) => (
+                      <option key={category.id} value={category.id}>
+                        {category.name}
+                      </option>
+                    ))}
+                </optgroup>
+              </Select>
+            </div>
+          </div>
+
+          <SegmentedControl
+            label="Filter by type"
+            options={TYPE_FILTER_OPTIONS}
+            value={filters.type}
+            onChange={(value) =>
+              setFilters((prev) => ({ ...prev, type: value }))
+            }
           />
 
-          <Button
-            type="submit"
-            className="w-full"
-            loading={isSubmitting}
-            disabled={needsSetup}
-          >
-            <Plus size={16} />
-            Add Transaction
-          </Button>
-        </form>
-      </Card>
+          {content()}
+        </Card>
 
-      <Card
-        header={
-          <div className="flex items-center justify-between">
-            <span>Transactions</span>
-
-            {status === "succeeded" && (
-              <span className="text-sm font-normal text-muted">
-                {visibleTransactions.length}{" "}
-                {visibleTransactions.length === 1
-                  ? "transaction"
-                  : "transactions"}
-              </span>
-            )}
-          </div>
-        }
-        className="w-full xl:min-w-0 xl:flex-1"
-      >
-        <div className="flex flex-wrap items-center gap-2">
-          <div className="w-36">
-            <Select
-              aria-label="Month"
-              value={filters.month}
-              onChange={(e) =>
-                setFilters((prev) => ({ ...prev, month: e.target.value }))
+        {transactionToDelete && (
+          <ConfirmDialog
+            onClose={() => setTransactionToDelete(null)}
+            onConfirm={async () => {
+              setIsDeleting(true);
+              try {
+                await dispatch(
+                  deleteTransaction(transactionToDelete.id),
+                ).unwrap();
+                dispatch(toastShown("Transaction deleted", "success"));
+              } catch {
+                dispatch(toastShown("Failed to delete transaction", "error"));
+              } finally {
+                setIsDeleting(false);
+                setTransactionToDelete(null);
               }
-            >
-              {monthOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </Select>
-          </div>
-          <div className="w-44">
-            <Select
-              aria-label="Filter by account"
-              value={filters.accountId}
-              onChange={(e) =>
-                setFilters((prev) => ({ ...prev, accountId: e.target.value }))
-              }
-            >
-              <option value="">All accounts</option>
-              {accounts.map((account) => (
-                <option key={account.id} value={account.id}>
-                  {account.name}
-                </option>
-              ))}
-            </Select>
-          </div>
-          <div className="w-44">
-            <Select
-              aria-label="Filter by category"
-              value={filters.categoryId}
-              onChange={(e) =>
-                setFilters((prev) => ({ ...prev, categoryId: e.target.value }))
-              }
-            >
-              <option value="">All categories</option>
-              <optgroup label="Expense">
-                {categories
-                  .filter((c) => c.type === "expense")
-                  .map((category) => (
-                    <option key={category.id} value={category.id}>
-                      {category.name}
-                    </option>
-                  ))}
-              </optgroup>
-              <optgroup label="Income">
-                {categories
-                  .filter((c) => c.type === "income")
-                  .map((category) => (
-                    <option key={category.id} value={category.id}>
-                      {category.name}
-                    </option>
-                  ))}
-              </optgroup>
-            </Select>
-          </div>
-        </div>
+            }}
+            title="Delete this transaction?"
+            description="This will permanently delete the transaction and update the account balance. This action cannot be undone."
+            confirmLabel="Delete Transaction"
+            loading={isDeleting}
+          />
+        )}
 
-        <SegmentedControl
-          label="Filter by type"
-          options={TYPE_FILTER_OPTIONS}
-          value={filters.type}
-          onChange={(value) => setFilters((prev) => ({ ...prev, type: value }))}
-        />
-
-        {content()}
-      </Card>
-
-      {transactionToDelete && (
-        <ConfirmDialog
-          onClose={() => setTransactionToDelete(null)}
-          onConfirm={async () => {
-            setIsDeleting(true);
-            try {
-              await dispatch(
-                deleteTransaction(transactionToDelete.id),
-              ).unwrap();
-              dispatch(toastShown("Transaction deleted", "success"));
-            } catch {
-              dispatch(toastShown("Failed to delete transaction", "error"));
-            } finally {
-              setIsDeleting(false);
-              setTransactionToDelete(null);
+        {transactionToEdit && (
+          <EditTransactionDialog
+            transaction={transactionToEdit}
+            onClose={() => setTransactionToEdit(null)}
+            onUpdated={(month) =>
+              setFilters((prev) =>
+                prev.month === month ? prev : { ...prev, month },
+              )
             }
-          }}
-          title="Delete this transaction?"
-          description="This will permanently delete the transaction and update the account balance. This action cannot be undone."
-          confirmLabel="Delete Transaction"
-          loading={isDeleting}
-        />
-      )}
-
-      {transactionToEdit && (
-        <EditTransactionDialog
-          transaction={transactionToEdit}
-          onClose={() => setTransactionToEdit(null)}
-          onUpdated={(month) =>
-            setFilters((prev) =>
-              prev.month === month ? prev : { ...prev, month },
-            )
-          }
-        />
-      )}
+          />
+        )}
+      </div>
     </div>
   );
 };
