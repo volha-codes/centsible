@@ -4,20 +4,39 @@ Budget tracker and planner with AI-powered analytics. Work in progress.
 
 **[Live demo](https://centsible-budget.vercel.app/)** · [API repository](https://github.com/volha-codes/centsible-api)
 
+![Transactions](docs/screenshots/transactions.png) ![Mobile](docs/screenshots/transactions-mobile.png)
+
 ![Accounts](docs/screenshots/accounts.png) ![Mobile](docs/screenshots/accounts-mobile.png)
 
 ![Categories](docs/screenshots/categories.png) ![Mobile](docs/screenshots/categories-mobile.png)
 
-## Status
+## Try it
 
-You can sign up, sign in and sign out. Each user manages their own accounts and
-categories: add, edit and delete them, with duplicate-name validation, loading, error
-and empty states and a responsive layout. Accounts have a currency and a starting
-balance. Categories are either income or expense, with an icon and a colour, and are
-listed under Expense and Income tabs. Data is stored in PostgreSQL through the API, so
-it survives a page refresh.
+Open the live demo and press **Try the demo** on the sign-in page to look around
+without signing up. It signs you in to a shared demo account filled with sample data:
+three accounts in PLN, EUR and USD, twelve categories and about sixty transactions
+over the last four months. The dates are generated relative to today, and the data is
+reset every time the button is pressed, so changes you make do not last.
 
-Not built yet: Transactions, Budgets, Reports, AI insights.
+## What it does
+
+You can sign up, sign in and sign out. Each user manages their own data:
+
+- **Accounts** with a currency and a starting balance. The current balance is
+  calculated from the starting balance and the account's transactions.
+- **Categories**, either income or expense, with an icon and a colour, listed under
+  Expense and Income tabs.
+- **Transactions**: add, edit and delete them. Each belongs to an account and a
+  category. The list is grouped by day and can be filtered by month, account, category
+  and type. Above it, a strip shows each account's current balance, and a table shows
+  income, expenses and the net result for the month, one row per currency (currencies
+  are never mixed).
+
+Everything has loading, error and empty states, duplicate-name validation where it
+matters, and a responsive layout. Money is stored as whole cents, so sums are exact.
+Data is kept in PostgreSQL through the API and survives a page refresh.
+
+Not built yet: Dashboard, Budgets, Reports, AI insights.
 
 The demo runs on free hosting and sign-up has no email verification, so please don't
 use a real password or real financial data. The API sleeps when idle, so the first
@@ -34,7 +53,9 @@ NestJS · Prisma · PostgreSQL (Neon).
 
 The API sets a signed token in an `httpOnly` cookie, so the app's JavaScript never
 sees it. On load the app asks `GET /auth/me` who is signed in, protected routes wait
-for the answer, and signing out clears the cookie and resets the stored data.
+for the answer, and signing out clears the cookie and resets the stored data. The demo
+button works the same way: it calls `POST /auth/demo`, which resets the demo data and
+sets the cookie.
 
 All API calls go through `/api`. In development Vite proxies it to the local backend,
 and in production Vercel rewrites it to the API. That keeps the app and the API on one
@@ -56,18 +77,26 @@ npm run test        # watch mode
 npm run test:run    # single run
 ```
 
-Reducers are tested through the thunk lifecycle actions, and the Accounts screen is
-tested with a mocked `fetch`: loading, error with retry, empty state, creating an
-account and a double click sending a single request. The sign-in flow and the
-Categories screen are not covered by tests yet.
+Covered so far:
+
+- reducers (accounts, auth, categories), tested through the thunk lifecycle actions;
+- money helpers (cents conversion and formatting) and date helpers (month ranges,
+  day labels, grouping);
+- the transaction filters and the per-currency month summary;
+- the Accounts screen, with a mocked `fetch`: loading, error with retry, empty state,
+  creating an account and a double click sending a single request.
+
+The sign-in forms and the Categories and Transactions screens are not covered by tests
+yet.
 
 ## Roadmap
 
 - [x] Backend + persistence (NestJS, Prisma, PostgreSQL)
-- [x] Authentication
+- [x] Authentication and a demo account
 - [x] Categories
-- [ ] Tests for the sign-in flow and categories
-- [ ] Transactions
-- [ ] Budgets and Reports
+- [x] Transactions
+- [ ] Dashboard
 - [ ] AI-powered insights
+- [ ] Tests for the forms and the main screens
+- [ ] Budgets and Reports
 - [ ] React Native mobile app, sharing types and Redux slices with the web app
