@@ -6,6 +6,7 @@ import Button from "../../components/ui/Button";
 import Card from "../../components/ui/Card";
 import ConfirmDialog from "../../components/ui/ConfirmDialog";
 import SegmentedControl from "../../components/ui/SegmentedControl";
+import type { ApiErrorPayload } from "../../lib/api";
 import type { Category, CategoryType } from "../../types";
 import { toastShown } from "../ui/uiSlice";
 import {
@@ -230,15 +231,24 @@ const Categories = () => {
             try {
               await dispatch(deleteCategory(categoryToDelete.id)).unwrap();
               dispatch(toastShown("Category deleted", "success"));
-            } catch {
-              dispatch(toastShown("Failed to delete category", "error"));
+            } catch (error) {
+              const inUse = (error as ApiErrorPayload).status === 409;
+
+              dispatch(
+                toastShown(
+                  inUse
+                    ? "This category has transactions, so it can't be deleted."
+                    : "Failed to delete category",
+                  "error",
+                ),
+              );
             } finally {
               setIsDeleting(false);
               setCategoryToDelete(null);
             }
           }}
           title={`Delete "${categoryToDelete.name}" category?`}
-          description="This will permanently delete this category. This action cannot be undone."
+          description="This will permanently delete this category. A category that has transactions can't be deleted. This action cannot be undone."
           confirmLabel="Delete Category"
           loading={isDeleting}
         />
