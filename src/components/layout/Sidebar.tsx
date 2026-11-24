@@ -90,7 +90,7 @@ const Sidebar = ({ open, onClose }: { open: boolean; onClose: () => void }) => {
     <>
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-40 flex w-56 shrink-0 flex-col gap-8 border-r border-border bg-background px-5 py-8 transition-transform duration-200 md:static md:translate-x-0",
+          "fixed inset-y-0 left-0 z-40 flex w-56 shrink-0 flex-col gap-8 overflow-y-auto border-r border-border bg-background px-5 py-8 transition-transform duration-200 md:static md:translate-x-0",
           open ? "translate-x-0" : "-translate-x-full",
         )}
       >
