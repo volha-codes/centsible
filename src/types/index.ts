@@ -36,6 +36,32 @@ export interface Transaction {
 
 export type TransactionInput = Omit<Transaction, "id" | "createdAt">;
 
+export interface CategoryTotal {
+  categoryId: string;
+  amount: number;
+}
+
+export interface MonthTotals {
+  month: string;
+  income: number;
+  expense: number;
+  categories: CategoryTotal[];
+}
+
+export interface Overview {
+  month: string;
+  currency: string;
+  balance: number;
+  previousBalance: number;
+  income: number;
+  expense: number;
+  previousIncome: number;
+  previousExpense: number;
+  byCategory: CategoryTotal[];
+  monthly: MonthTotals[];
+  recent: Transaction[];
+}
+
 interface RecurringRuleBase {
   id: string;
   accountId: string;
