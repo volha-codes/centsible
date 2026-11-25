@@ -11,6 +11,7 @@ import { fetchMe, selectAuthStatus } from "./features/auth/authSlice";
 import Login from "./features/auth/Login";
 import Register from "./features/auth/Register";
 import Categories from "./features/categories/Categories";
+import Dashboard from "./features/dashboard/Dashboard";
 import Transactions from "./features/transactions/Transactions";
 import { selectToast, toastDismissed } from "./features/ui/uiSlice";
 
@@ -36,6 +37,7 @@ function App() {
         </Route>
 
         <Route element={<ProtectedLayout />}>
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route
             path="/accounts"
             element={
@@ -62,7 +64,7 @@ function App() {
           />
         </Route>
 
-        <Route path="*" element={<Navigate to="/accounts" replace />} />
+        <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
 
       {toast && <Toast toast={toast} onDismiss={handleDismissToast} />}
