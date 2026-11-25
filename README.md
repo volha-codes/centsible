@@ -4,6 +4,8 @@ Budget tracker and planner with AI-powered analytics. Work in progress.
 
 **[Live demo](https://centsible-budget.vercel.app/)** · [API repository](https://github.com/volha-codes/centsible-api)
 
+![Dashboard](docs/screenshots/dashboard.png) ![Mobile](docs/screenshots/dashboard-mobile.png)
+
 ![Transactions](docs/screenshots/transactions.png) ![Mobile](docs/screenshots/transactions-mobile.png)
 
 ![Accounts](docs/screenshots/accounts.png) ![Mobile](docs/screenshots/accounts-mobile.png)
@@ -17,11 +19,16 @@ without signing up. It signs you in to a shared demo account filled with sample 
 three accounts in PLN, EUR and USD, twelve categories and about sixty transactions
 over the last four months. The dates are generated relative to today, and the data is
 reset every time the button is pressed, so changes you make do not last.
+After signing in you land on the dashboard.
 
 ## What it does
 
 You can sign up, sign in and sign out. Each user manages their own data:
 
+- **Dashboard** for a chosen month and currency: the total balance, income and
+  spending with the change from the previous month, spending by category, the latest
+  transactions, and a chart of income against expenses over the last six months.
+  Hovering a bar shows which categories it is made of.
 - **Accounts** with a currency and a starting balance. The current balance is
   calculated from the starting balance and the account's transactions.
 - **Categories**, either income or expense, with an icon and a colour, listed under
@@ -36,7 +43,7 @@ Everything has loading, error and empty states, duplicate-name validation where 
 matters, and a responsive layout. Money is stored as whole cents, so sums are exact.
 Data is kept in PostgreSQL through the API and survives a page refresh.
 
-Not built yet: Dashboard, Budgets, Reports, AI insights.
+Not built yet: Budgets, Reports, AI insights.
 
 The demo runs on free hosting and sign-up has no email verification, so please don't
 use a real password or real financial data. The API sleeps when idle, so the first
@@ -44,7 +51,7 @@ request after a pause can take up to a minute while it wakes up.
 
 ## Stack
 
-React · TypeScript · Redux Toolkit · React Router · Tailwind CSS v4 · Vite
+React · TypeScript · Redux Toolkit · React Router · Tailwind CSS v4 · Chart.js · Vite
 
 Tested with Vitest + React Testing Library. The backend lives in a separate repository:
 NestJS · Prisma · PostgreSQL (Neon).
@@ -83,11 +90,12 @@ Covered so far:
 - money helpers (cents conversion and formatting) and date helpers (month ranges,
   day labels, grouping);
 - the transaction filters and the per-currency month summary;
+- the dashboard helpers (month-over-month change, category shares);
 - the Accounts screen, with a mocked `fetch`: loading, error with retry, empty state,
   creating an account and a double click sending a single request.
 
-The sign-in forms and the Categories and Transactions screens are not covered by tests
-yet.
+The sign-in forms and the Categories, Transactions and Dashboard screens are not
+covered by tests yet.
 
 ## Roadmap
 
@@ -95,7 +103,7 @@ yet.
 - [x] Authentication and a demo account
 - [x] Categories
 - [x] Transactions
-- [ ] Dashboard
+- [x] Dashboard
 - [ ] AI-powered insights
 - [ ] Tests for the forms and the main screens
 - [ ] Budgets and Reports
