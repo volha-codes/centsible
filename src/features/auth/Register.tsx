@@ -51,7 +51,7 @@ const Register = () => {
     try {
       await dispatch(register({ firstName, email, password })).unwrap();
       dispatch(toastShown("You successfully created an account.", "success"));
-      navigate("/accounts", { replace: true });
+      navigate("/dashboard", { replace: true });
     } catch (error) {
       const errorData = getRegisterErrorMessage(error as ApiErrorPayload);
       if (errorData.field === "email") {

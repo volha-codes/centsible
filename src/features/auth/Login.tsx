@@ -39,7 +39,7 @@ const Login = () => {
     setIsDemoLoading(true);
     try {
       await dispatch(loginDemo()).unwrap();
-      navigate("/accounts", { replace: true });
+      navigate("/dashboard", { replace: true });
     } catch (error) {
       setError(getLoginErrorMessage(error as ApiErrorPayload));
       setIsDemoLoading(false);
@@ -61,7 +61,7 @@ const Login = () => {
     try {
       await dispatch(login({ email, password })).unwrap();
       dispatch(toastShown("You successfully signed in.", "success"));
-      navigate("/accounts", { replace: true });
+      navigate("/dashboard", { replace: true });
     } catch (error) {
       setError(getLoginErrorMessage(error as ApiErrorPayload));
     } finally {

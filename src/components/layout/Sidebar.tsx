@@ -20,6 +20,7 @@ import Logo from "../Logo";
 const NAV = [
   {
     label: "Dashboard",
+    to: "/dashboard",
     icon: Home,
   },
   {

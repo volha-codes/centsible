@@ -11,7 +11,7 @@ const PublicLayout = () => {
     if (authStatus === "unknown") {
       return <PageLoader />;
     } else if (authStatus === "authenticated") {
-      return <Navigate to="/accounts" replace />;
+      return <Navigate to="/dashboard" replace />;
     } else {
       return <Outlet />;
     }
