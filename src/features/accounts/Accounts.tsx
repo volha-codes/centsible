@@ -134,12 +134,14 @@ const Accounts = () => {
               <hr className="border-border" />
 
               <div className="flex items-center gap-2.5 py-1.5">
-                <div className="font-medium">{account.name}</div>
-                <div className="rounded-md bg-surface-elevated px-2 py-1 text-sm font-medium text-muted">
-                  {account.currency}
-                </div>
-                <div className="ml-auto font-medium tabular-nums">
-                  {formatMoney(account.balance, account.currency)}
+                <div className="flex min-w-0 flex-1 items-center gap-2.5 overflow-x-auto whitespace-nowrap">
+                  <div className="font-medium">{account.name}</div>
+                  <div className="rounded-md bg-surface-elevated px-2 py-1 text-sm font-medium text-muted">
+                    {account.currency}
+                  </div>
+                  <div className="ml-auto font-medium tabular-nums">
+                    {formatMoney(account.balance, account.currency)}
+                  </div>
                 </div>
 
                 <Popover>
